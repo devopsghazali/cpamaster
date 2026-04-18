@@ -1,11 +1,5 @@
 import { motion } from 'motion/react'
-import { Sparkles, MapPin } from 'lucide-react'
-
-const stats = [
-  { label: 'Learners', value: '12k+' },
-  { label: 'Funnels tested', value: '85+' },
-  { label: 'Focus', value: 'CPA' },
-]
+import { Sparkles } from 'lucide-react'
 
 const itemVariants = {
   hidden: { opacity: 0, y: 14, filter: 'blur(6px)' },
@@ -66,33 +60,6 @@ export default function ProfileHeader() {
         cleaner execution, and trust-first education for people who want serious
         digital marketing systems.
       </motion.p>
-
-      <motion.div
-        variants={itemVariants}
-        className="mt-4 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-500"
-      >
-        <MapPin size={13} />
-        <span>Built in India. Designed for global digital marketers.</span>
-      </motion.div>
-
-      <motion.div
-        variants={itemVariants}
-        className="mt-6 grid w-full max-w-sm grid-cols-3 gap-3"
-      >
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className="glass-card rounded-xl px-3 py-2.5"
-          >
-            <div className="text-base font-bold text-slate-900 dark:text-white sm:text-lg">
-              {s.value}
-            </div>
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-500">
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </motion.div>
     </section>
   )
 }

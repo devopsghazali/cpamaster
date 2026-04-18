@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import Background from '../components/Background'
 import ThemeToggle from '../components/ThemeToggle'
 import ProfileHeader from '../components/ProfileHeader'
-import TrustBar from '../components/TrustBar'
 import VideoSection from '../components/VideoSection'
 import LinksSection from '../components/LinksSection'
 import Footer from '../components/Footer'
@@ -32,7 +31,6 @@ export default function LandingPage() {
             className="relative lg:sticky lg:top-14 lg:h-fit lg:self-start"
           >
             <ProfileHeader />
-            <TrustBar />
             <VideoSection />
           </motion.section>
 

@@ -38,12 +38,19 @@ export default function NetworksSection() {
             <div
               className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${network.accent} opacity-80`}
             />
-            <div
-              className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${network.accent} text-white shadow-[0_18px_40px_-22px_rgba(15,23,42,0.8)]`}
-            >
-              <span className="text-[15px] font-bold tracking-tight">
-                {network.name.slice(0, 2).toUpperCase()}
-              </span>
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-2 shadow-[0_18px_40px_-22px_rgba(15,23,42,0.8)] ring-1 ring-black/5 dark:bg-white/95">
+              <img
+                src={network.logo}
+                alt={`${network.name} logo`}
+                loading="lazy"
+                className="h-full w-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  e.currentTarget.parentElement.innerHTML = `<span class="text-[15px] font-bold tracking-tight text-slate-900">${network.name
+                    .slice(0, 2)
+                    .toUpperCase()}</span>`
+                }}
+              />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">
               {network.name}

@@ -649,6 +649,106 @@ KYA MISSING (future):
   - Live Razorpay mode: VITE_PAYMENT_MODE=live + Supabase
     edge functions + RAZORPAY_* secrets deploy.
 
+----------------------------------------------------------------
+11. JOIN COURSES HERO SIMPLIFY + REAL NETWORK LOGOS + SECURITY CLEANUP
+----------------------------------------------------------------
+
+Date: 2026-04-18 (same day, teesra update)
+
+USER KE CONCERNS + INSTRUCTIONS:
+  1. Frontend static hai — .env / .env.example GitHub pe kyu push
+     karna, repo private honi chahiye, SSL nahi hai cpamaster.online
+     par, env leak ka risk kya?
+  2. Join Courses page se yeh sab hatao:
+       - "Start Your CPA Marketing Journey Today" lamba heading
+       - Long description (Learn CPA marketing with step-by-step...)
+       - Join Now + Explore Courses buttons
+       - "Trusted by 1000+ students" / "Razorpay protected checkout"
+       - "All-in-one CPA marketing" chip
+  3. Main UI heading se bhi hatao:
+       - "Built in India. Designed for global digital marketers."
+       - Stats (12k+ Learners / 85+ Funnels tested / CPA Focus)
+       - Trust chips (Verified course delivery / Active buyer
+         activity / Server-side payment checks)
+     -> Simple 2-line heading rakho.
+  4. Networks section me AD / OG / AF / CP wale initials hata ke
+     real platform logos lagao (web se).
+
+SECURITY CLARIFICATION (user ko diya):
+  - VITE_* env vars frontend bundle me public hote hain, ismein
+    jo hamare paas keys hain (Supabase URL + publishable key +
+    brand name + drive link) WOH ALL safe-to-expose hain by design.
+    Supabase publishable key sirf RLS-protected reads ke liye hai,
+    user ke browser me hamesha jaati hai.
+  - REAL secrets (RAZORPAY_KEY_ID, RAZORPAY_SECRET, webhook secret)
+    sirf Supabase Edge Function secrets me rehte hain —
+    `supabase secrets set ...` se set hote hain, repo me kabhi nahi.
+  - .env file repo me nahi hai (never was). .gitignore me already
+    .env / .env.local / .env.*.local protected.
+  - .env.example file empty thi (sirf blank line). Delete kar diya
+    — noise kam, misleading bhi nahi.
+  - Repo abhi PUBLIC hai (github.com/devopsghazali/cpamaster).
+    Private kar sakte ho Settings -> General -> Danger Zone ->
+    Change visibility. GitHub Pages free plan pe bhi private repo
+    ka site public host ho sakta hai agar user chahein (Pro plan
+    pe private pages bhi possible, par yeh zaruri nahi).
+  - SSL: HTTPS abhi fail (HTTP 000), HTTP 200 serve ho raha hai.
+    Reason: "Enforce HTTPS" toggle enable nahi, ya DNS TTL fully
+    propagate nahi hua. Steps:
+      a) Hostinger DNS me GitHub Pages A records verify karo:
+           185.199.108.153
+           185.199.109.153
+           185.199.110.153
+           185.199.111.153
+      b) github.com/devopsghazali/cpamaster/settings/pages
+      c) "DNS check" green hone ka wait karo (10-60 min).
+      d) "Enforce HTTPS" checkbox enable karo.
+      e) GitHub Let's Encrypt cert automatically issue karega —
+         free, auto-renewing.
+
+CODE CHANGES:
+
+  a) src/pages/JoinCoursesPage.jsx
+     - Hero heading shrink: "Learn CPA Marketing. Start Earning
+       Online." (gradient "Start Earning Online.")
+     - Long description + Join Now / Explore Courses buttons
+       dono hata diye.
+     - scrollToId helper + unused import (nothing else used it)
+       remove.
+
+  b) src/data/networks.js
+     - Naye fields per network: logo (Google s2 favicon URL at
+       sz=128) + site (official URL).
+         AdBlueMedia -> adbluemedia.com
+         OGAds       -> ogads.com
+         Affmine     -> affmine.com
+         CPALead     -> cpalead.com
+
+  c) src/components/NetworksSection.jsx
+     - Initials badge (AD / OG / AF / CP) replace with white
+       rounded tile holding <img src={logo}> (object-contain).
+     - onError fallback: agar favicon load fail ho, to pehle jaise
+       2-letter initials dikhate hain (graceful degrade, no broken
+       icon).
+     - lazy loading on logos.
+
+  d) .env.example
+     - Empty file tha, delete kar diya.
+
+BUILD:
+  - npm run build OK
+      dist/index.html           1.07 kB
+      dist/assets css          65.64 kB  (10.98 kB gzip)
+      dist/assets js          433.66 kB (136.07 kB gzip)
+
+NEXT STEPS (user decides):
+  - Repo private karna ho: GitHub repo Settings -> change visibility.
+  - SSL chalu: Hostinger DNS A records verify + GH Pages "Enforce
+    HTTPS" enable (DNS check green hone ke baad).
+  - Commit + push -> Actions deploy.yml auto-trigger -> cpamaster.online
+    par stale content (old "Built in India", stats, etc.) naye
+    simple heading se replace ho jayega.
+
 ================================================================
   End of project.txt
 ================================================================
