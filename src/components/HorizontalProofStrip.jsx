@@ -1,0 +1,166 @@
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { ChevronLeft, ChevronRight, TrendingUp, X } from 'lucide-react'
+import { proofs } from '../data/proofs'
+
+export default function HorizontalProofStrip() {
+  const reduce = useReducedMotion()
+  const scrollerRef = useRef(null)
+  const [canLeft, setCanLeft] = useState(false)
+  const [canRight, setCanRight] = useState(true)
+  const [activeIndex, setActiveIndex] = useState(null)
+
+  useEffect(() => {
+    const el = scrollerRef.current
+    if (!el) return undefined
+    const update = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el
+      setCanLeft(scrollLeft > 4)
+      setCanRight(scrollLeft + clientWidth < scrollWidth - 4)
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (activeIndex === null) return undefined
+    const handler = (event) => {
+      if (event.key === 'Escape') setActiveIndex(null)
+      if (event.key === 'ArrowRight') {
+        setActiveIndex((i) => (i + 1) % proofs.length)
+      }
+      if (event.key === 'ArrowLeft') {
+        setActiveIndex((i) => (i - 1 + proofs.length) % proofs.length)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', handler)
+      document.body.style.overflow = prev
+    }
+  }, [activeIndex])
+
+  const scrollBy = (direction) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const step = el.clientWidth * 0.85
+    el.scrollBy({ left: direction * step, behavior: 'smooth' })
+  }
+
+  const active = activeIndex !== null ? proofs[activeIndex] : null
+
+  return (
+    <section className="mt-16 sm:mt-20">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="chip mx-auto">
+          <TrendingUp size={12} className="text-emerald-500" />
+          <span>Real results, real students</span>
+        </span>
+        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+          Student Earning{' '}
+          <span className="text-gradient-brand">Proofs</span>
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-[15px]">
+          Our students are applying these strategies and generating real
+          results. Swipe through verified earning screenshots below.
+        </p>
+      </div>
+
+      <div className="relative mt-10">
+        <button
+          type="button"
+          onClick={() => scrollBy(-1)}
+          disabled={!canLeft}
+          aria-label="Scroll left"
+          className="absolute left-1 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-[0_16px_40px_-16px_rgba(15,23,42,0.35)] backdrop-blur transition-opacity hover:bg-white disabled:cursor-not-allowed disabled:opacity-0 dark:bg-slate-900/90 dark:text-white dark:hover:bg-slate-900 sm:flex"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollBy(1)}
+          disabled={!canRight}
+          aria-label="Scroll right"
+          className="absolute right-1 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-[0_16px_40px_-16px_rgba(15,23,42,0.35)] backdrop-blur transition-opacity hover:bg-white disabled:cursor-not-allowed disabled:opacity-0 dark:bg-slate-900/90 dark:text-white dark:hover:bg-slate-900 sm:flex"
+        >
+          <ChevronRight size={20} />
+        </button>
+
+        <div
+          ref={scrollerRef}
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {proofs.map((proof, index) => (
+            <motion.button
+              type="button"
+              key={proof.id}
+              onClick={() => setActiveIndex(index)}
+              whileHover={reduce ? undefined : { y: -3 }}
+              whileTap={reduce ? undefined : { scale: 0.98 }}
+              className="group relative shrink-0 snap-start overflow-hidden rounded-[22px] bg-slate-900/5 outline-none ring-1 ring-black/5 transition-shadow focus-visible:ring-2 focus-visible:ring-cyan-400/60 dark:bg-slate-900/40 dark:ring-white/10"
+              style={{ width: 'clamp(220px, 68vw, 300px)' }}
+              aria-label={`Open ${proof.label}`}
+            >
+              <div className="aspect-[9/16] w-full">
+                <img
+                  src={proof.src}
+                  alt={proof.label}
+                  loading={index < 3 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  draggable={false}
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+              </div>
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
+                <span>Verified</span>
+                <span>#{String(index + 1).padStart(2, '0')}</span>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm"
+            onClick={() => setActiveIndex(null)}
+            role="dialog"
+            aria-modal="true"
+          >
+            <button
+              type="button"
+              onClick={() => setActiveIndex(null)}
+              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              aria-label="Close preview"
+            >
+              <X size={20} />
+            </button>
+            <motion.img
+              key={active.id}
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              src={active.src}
+              alt={active.label}
+              className="max-h-[88vh] max-w-full rounded-3xl shadow-[0_60px_120px_-30px_rgba(15,23,42,0.9)]"
+              onClick={(event) => event.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  )
+}

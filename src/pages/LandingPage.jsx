@@ -7,10 +7,6 @@ import VideoSection from '../components/VideoSection'
 import LinksSection from '../components/LinksSection'
 import Footer from '../components/Footer'
 import RecentBuyersPopup from '../components/RecentBuyersPopup'
-import WhyChooseSection from '../components/WhyChooseSection'
-import NetworksSection from '../components/NetworksSection'
-import ProofGallery from '../components/ProofGallery'
-import FaqSection from '../components/FaqSection'
 
 const leftVariants = {
   hidden: { opacity: 1 },
@@ -42,15 +38,9 @@ export default function LandingPage() {
 
           <div className="relative pt-2 lg:pt-6">
             <LinksSection />
+            <Footer />
           </div>
         </div>
-
-        <WhyChooseSection />
-        <NetworksSection />
-        <ProofGallery />
-        <FaqSection />
-
-        <Footer />
       </div>
     </>
   )

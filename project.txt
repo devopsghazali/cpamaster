@@ -560,6 +560,95 @@ DEPLOY FLOW:
   - GitHub Actions deploy.yml auto-trigger hota hai, Pages
     pe new build 1-2 min me live (cpamaster.online).
 
+----------------------------------------------------------------
+10. JOIN COURSES PAGE = FULL SALES FUNNEL (sections moved)
+----------------------------------------------------------------
+
+Date: 2026-04-18 (later same day)
+
+User feedback: "jo aapne banaya hai yeh sab kuch Join Courses mein
+likho aur simple banao. Har photo horizontally scrollable ho.
+Proofs load hone mein problem hai. Form tab khule jab Apply Now
+button pe click kare (modal). Demo screenshots (screenshot/demo)
+jaisa look rakho."
+
+KYA KIYA:
+
+  a) LandingPage.jsx simple wapas
+     - WhyChoose / Networks / ProofGallery / FAQ sections HATA diye.
+     - Home page wapas se sirf profile + trust + video + links +
+       footer (original premium linktree-style identity).
+
+  b) JoinCoursesPage.jsx = complete sales funnel
+     Order (demo layout se inspired):
+       1. Hero: "Start Your CPA Marketing Journey Today"
+          + Join Now / Explore Courses buttons (scroll to #courses)
+          + "Trusted by 1000+ students" chip
+       2. Course card section (CPA MASTERY 2399)
+       3. WhyChooseSection ($15k+ + Telegram CTA)
+       4. NetworksSection (AdBlueMedia / OGAds / Affmine / CPALead)
+       5. HorizontalProofStrip (naya — horizontal scroll)
+       6. FaqSection
+       7. CommunityCta (Telegram + Instagram buttons)
+       8. Footer
+
+  c) Naye components
+     - src/components/ApplyNowModal.jsx
+         Full enrollment form modal. Fields: name / email / phone.
+         Validation (emailPattern + phonePattern). ESC close,
+         body scroll lock, mobile bottom-sheet feel (rounded-t on
+         small screens, centered card on sm+). Placeholder mode
+         + live mode dono handle karta hai.
+     - src/components/CoursePurchaseCard.jsx (rewrite)
+         Clean card UI. Badge + price + highlight + learning
+         points grid. "Apply Now" button sirf modal open karta
+         hai — form embedded nahi hai ab.
+     - src/components/HorizontalProofStrip.jsx (replaces
+         ProofGallery.jsx, purana delete).
+         Features:
+         - Horizontal snap scroll (snap-x snap-mandatory)
+         - Hidden scrollbar (webkit + Firefox)
+         - Left/Right arrow buttons (desktop only, sm: flex)
+         - Arrows auto-disable at edges (scroll state tracked)
+         - First 3 images eager-load (loading="eager"), baaki
+           lazy — proofs turant dikh jayenge, bandwidth waste nahi
+         - Click -> fullscreen lightbox, keyboard nav (Esc/Arrows)
+         - aspect-[9/16] mobile screenshots
+     - src/components/CommunityCta.jsx
+         Telegram (https://t.me/MkArmy01) + Instagram
+         (the_mkbhai) gradient buttons. Instagram icon inline SVG
+         (lucide-react v1.8 me Instagram export nahi hai).
+
+  d) Image loading fix
+     - Purana grid (25 images, aspect-[9/16]) sabhi ek saath load
+       hota tha — GitHub Pages pe HUGE JPEGs => slow / blank.
+     - Horizontal scroll + 3 eager + 22 lazy = ab sirf visible
+       pehle load hoti hain, rest on-scroll. Blank issue gone.
+     - Path scheme same: `${import.meta.env.BASE_URL}proofs/${file}`
+       = `/proofs/<name>.jpg.jpeg` on cpamaster.online (base='/').
+
+  e) Routing behavior
+     - LinksSection me Join Course card `href: '/join-courses'`
+       + internal: true (HashRouter pe kaam karta hai).
+     - Hero "Join Now" / "Explore Courses" buttons same-page
+       #courses anchor pe smooth scroll.
+
+  f) Build verify
+     - npm run build OK (2158 modules, 436 kB JS gzip 136 kB,
+       66 kB CSS gzip 11 kB). Thoda bada than before kyunki
+       HorizontalProofStrip + ApplyNowModal + CommunityCta add.
+
+  g) Edge case: lucide-react build error
+     - Instagram icon v1.8 me export nahi hai.
+     - Fix: inline SVG glyph (CommunityCta.jsx) — no dependency
+       upgrade needed.
+
+KYA MISSING (future):
+  - Agar second course add karna hai (e.g. High Earning 10k),
+    courses.js me add karo. Grid pehle se 2-column ready hai.
+  - Live Razorpay mode: VITE_PAYMENT_MODE=live + Supabase
+    edge functions + RAZORPAY_* secrets deploy.
+
 ================================================================
   End of project.txt
 ================================================================
