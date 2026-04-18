@@ -741,13 +741,76 @@ BUILD:
       dist/assets css          65.64 kB  (10.98 kB gzip)
       dist/assets js          433.66 kB (136.07 kB gzip)
 
-NEXT STEPS (user decides):
-  - Repo private karna ho: GitHub repo Settings -> change visibility.
-  - SSL chalu: Hostinger DNS A records verify + GH Pages "Enforce
-    HTTPS" enable (DNS check green hone ke baad).
-  - Commit + push -> Actions deploy.yml auto-trigger -> cpamaster.online
-    par stale content (old "Built in India", stats, etc.) naye
-    simple heading se replace ho jayega.
+PUSH + DEPLOY:
+  - git push origin main -> commit be00c48 pushed successfully.
+    (8290836..be00c48 main -> main)
+  - GitHub Actions deploy.yml auto-trigger — Pages par 1-2 min me
+    naye heading + real network logos live ho jayenge.
+
+SSL DIAGNOSIS (push ke baad kiya):
+  Current state (2026-04-18):
+    nslookup cpamaster.online 8.8.8.8
+      -> 185.199.108.153    (SIRF 1 A record)
+    curl https://cpamaster.online
+      -> SEC_E_WRONG_PRINCIPAL (cert domain mismatch)
+
+  Matlab:
+    a) GitHub ne abhi tak Let's Encrypt cert issue nahi kiya
+       cpamaster.online ke liye.
+    b) Reason: Hostinger DNS me sirf 1 A record hai (108.153).
+       GitHub Pages ko custom domain verify karne ke liye sabhi
+       4 A records chahiye — "DNS check" tab tak green nahi
+       hota aur "Enforce HTTPS" toggle greyed-out rehta hai.
+
+  FIX (user ko khud karna hai, code se nahi ho sakta):
+
+    STEP 1 — Hostinger DNS (hpanel.hostinger.com):
+      Domains -> cpamaster.online -> DNS / Nameservers -> DNS Zone.
+      Neeche ke 3 A records ADD karo (ek 108.153 pehle se hai):
+        Type: A   Name: @   Points to: 185.199.109.153   TTL: 14400
+        Type: A   Name: @   Points to: 185.199.110.153   TTL: 14400
+        Type: A   Name: @   Points to: 185.199.111.153   TTL: 14400
+
+      Optional (www subdomain ke liye):
+        Type: CNAME  Name: www  Points to: devopsghazali.github.io
+
+      Save karo. 10-30 min propagate hone do.
+
+    STEP 2 — Verify propagation:
+      nslookup cpamaster.online 8.8.8.8
+      -> chaaron IPs (108/109/110/111 .153) dikhne chahiye.
+      Ya online: https://dnschecker.org/#A/cpamaster.online
+
+    STEP 3 — GitHub Pages SSL enable:
+      github.com/devopsghazali/cpamaster/settings/pages
+      -> "Custom domain" section me DNS check "✓" green hone ka
+         wait karo (Retry button hai, click karo agar red hai).
+      -> "Enforce HTTPS" checkbox AUTOMATICALLY enable ho jayega
+         (pehle greyed-out tha).
+      -> Checkbox pe click karo.
+      -> GitHub automatically Let's Encrypt cert issue karega
+         (5-20 min lag sakte hain).
+      -> https://cpamaster.online lock icon ke saath open hoga.
+
+    STEP 4 — Verify:
+      curl -sI https://cpamaster.online
+      -> HTTP/2 200 + valid cert (no SEC_E_WRONG_PRINCIPAL).
+
+  Free + auto-renewing — saal bhar koi kharcha nahi, GitHub
+  90-day pehle automatic renew karega.
+
+REPO PRIVACY (user ko decide karna hai):
+  Current: github.com/devopsghazali/cpamaster -> PUBLIC.
+  Private karna ho to 2 options:
+    A) GitHub Pro upgrade ($4/mo) -> private repo pe bhi Pages
+       work karega. Settings -> Change visibility -> Private.
+    B) Free option: project Vercel/Netlify pe move karo. Dono
+       par private repo + free custom domain + auto-SSL (Let's
+       Encrypt). GH Actions deploy.yml hata dena phir.
+  Agar current public repo me koi secret (Razorpay key / token)
+  commit nahi hai (humne check kar liya — nahi hai), to PUBLIC
+  rakhna bhi safe hai. Sirf code dikhta hai, secrets Supabase
+  me.
 
 ================================================================
   End of project.txt
