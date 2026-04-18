@@ -1,26 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" fill="none">
   <defs>
-    <linearGradient id="lock-bg" x1="12" y1="8" x2="82" y2="90" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#09111D" />
-      <stop offset="1" stop-color="#05080F" />
+    <linearGradient id="lock-bg" x1="8" y1="8" x2="88" y2="88" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B1220" />
+      <stop offset="1" stop-color="#03060D" />
     </linearGradient>
-    <linearGradient id="lock-stroke" x1="18" y1="22" x2="74" y2="74" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#2563EB" />
-      <stop offset="0.55" stop-color="#06B6D4" />
-      <stop offset="1" stop-color="#7C3AED" />
+    <linearGradient id="lock-accent" x1="20" y1="78" x2="78" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00C6FF" />
+      <stop offset="1" stop-color="#00FF9F" />
     </linearGradient>
-    <linearGradient id="lock-text" x1="124" y1="20" x2="328" y2="78" gradientUnits="userSpaceOnUse">
+    <linearGradient id="lock-text" x1="110" y1="72" x2="380" y2="28" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#E2E8F0" />
-      <stop offset="0.4" stop-color="#60A5FA" />
-      <stop offset="1" stop-color="#22D3EE" />
+      <stop offset="0.45" stop-color="#00C6FF" />
+      <stop offset="1" stop-color="#00FF9F" />
     </linearGradient>
+    <radialGradient id="lock-halo" cx="50%" cy="50%" r="55%">
+      <stop offset="0" stop-color="#00C6FF" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#00C6FF" stop-opacity="0" />
+    </radialGradient>
   </defs>
-  <rect x="8" y="8" width="80" height="80" rx="24" fill="url(#lock-bg)" />
-  <path d="M28 28H47.5C58 28 66 36.3 66 47C66 57.7 58 66 47.5 66H28V28Z" stroke="url(#lock-stroke)" stroke-width="7" stroke-linejoin="round" />
-  <path d="M28 48H50" stroke="url(#lock-stroke)" stroke-width="7" stroke-linecap="round" />
-  <path d="M36 60L47 49L55 55L68 38" stroke="#22D3EE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-  <path d="M125.707 68V29.818H150.105C154.639 29.818 158.532 30.5687 161.784 32.07C165.036 33.5343 167.532 35.6817 169.272 38.512C171.049 41.3423 171.938 44.7687 171.938 48.791C171.938 52.776 171.049 56.2023 169.272 59.07C167.532 61.9377 165.036 64.1403 161.784 65.678C158.532 67.2157 154.639 67.9845 150.105 67.9845L125.707 68ZM138.483 57.552H148.903C151.13 57.552 153.036 57.1633 154.619 56.386C156.202 55.5713 157.406 54.4033 158.231 52.882C159.082 51.3607 159.508 49.6443 159.508 47.733C159.508 45.8217 159.082 44.124 158.231 42.64C157.406 41.1187 156.202 39.969 154.619 39.1917C153.036 38.377 151.13 37.9697 148.903 37.9697H138.483V57.552Z" fill="url(#lock-text)" />
-  <path d="M179.843 68V40.635H190.93V44.327C192.247 42.9003 193.859 41.787 195.768 40.987C197.713 40.1503 199.862 39.732 202.214 39.732C205.097 39.732 207.519 40.2697 209.478 41.345C211.436 42.3837 212.915 43.931 213.915 45.987C214.914 43.931 216.511 42.3837 218.704 41.345C220.896 40.2697 223.349 39.732 226.061 39.732C229.146 39.732 231.789 40.3443 233.99 41.569C236.219 42.7563 237.929 44.486 239.122 46.758C240.316 49.03 240.912 51.7923 240.912 55.045V68H229.825V56.529C229.825 54.8053 229.362 53.453 228.437 52.472C227.512 51.491 226.254 51.0005 224.661 51.0005C223.567 51.0005 222.586 51.2413 221.719 51.723C220.879 52.1673 220.212 52.805 219.719 53.636C219.227 54.4293 218.98 55.372 218.98 56.464V68H207.893V56.529C207.893 54.8053 207.431 53.453 206.505 52.472C205.58 51.491 204.322 51.0005 202.729 51.0005C201.635 51.0005 200.654 51.2413 199.788 51.723C198.948 52.1673 198.281 52.805 197.788 53.636C197.295 54.4293 197.049 55.372 197.049 56.464V68H185.962H179.843Z" fill="url(#lock-text)" />
-  <path d="M248.161 68V40.635H259.248V44.327C260.479 42.975 262.053 41.8987 263.972 41.0987C265.892 40.262 268.053 39.8437 270.455 39.8437C274.135 39.8437 277.256 40.6007 279.818 42.1147C282.417 43.6287 284.355 45.6903 285.634 48.2997C286.948 50.909 287.605 53.8907 287.605 57.245C287.605 60.5993 286.948 63.5933 285.634 66.227C284.355 68.823 282.417 70.8723 279.818 72.375C277.256 73.9157 274.135 74.686 270.455 74.686C268.052 74.686 265.899 74.293 263.997 73.507C262.094 72.7203 260.537 71.6687 259.325 70.352V84.1H248.161V68ZM267.337 64.043C269.073 64.043 270.556 63.6687 271.785 62.92C273.051 62.1713 274.013 61.141 274.67 59.829C275.364 58.517 275.711 57.014 275.711 55.32C275.711 53.588 275.364 52.0733 274.67 50.776C274.013 49.4413 273.051 48.3993 271.785 47.65C270.556 46.9007 269.073 46.526 267.337 46.526C265.639 46.526 264.156 46.9007 262.889 47.65C261.66 48.3993 260.698 49.4413 260.004 50.776C259.347 52.0733 259.018 53.588 259.018 55.32C259.018 57.014 259.347 58.517 260.004 59.829C260.698 61.141 261.66 62.1713 262.889 62.92C264.156 63.6687 265.639 64.043 267.337 64.043Z" fill="url(#lock-text)" />
-  <path d="M294.596 68V40.635H305.683V45.364C306.721 43.677 308.104 42.3953 309.833 41.519C311.592 40.6427 313.737 40.2045 316.267 40.2045H319.536V50.61H315.293C312.522 50.61 310.429 51.219 309.015 52.437C307.634 53.6183 306.943 55.562 306.943 58.268V68H294.596Z" fill="url(#lock-text)" />
+  <rect x="8" y="8" width="80" height="80" rx="22" fill="url(#lock-bg)" />
+  <circle cx="48" cy="48" r="34" fill="url(#lock-halo)" />
+  <rect x="9" y="9" width="78" height="78" rx="21" stroke="white" stroke-opacity="0.08" />
+  <g stroke="url(#lock-accent)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+    <path d="M62 30 A 20 20 0 1 0 62 66" />
+    <path d="M40 68 L 40 30 L 54 42 L 68 30 L 68 68" />
+  </g>
+  <text x="108" y="62" font-family="'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="-1.5" fill="url(#lock-text)">CPAMaster</text>
 </svg>
