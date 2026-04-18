@@ -406,6 +406,97 @@ ENV SWITCH:
   - Real payments:          VITE_PAYMENT_MODE=live  (edge functions
                             + Razorpay secrets must be deployed)
 
+----------------------------------------------------------------
+8. DEPLOYMENT TO GITHUB PAGES (is chat me)
+----------------------------------------------------------------
+
+USER KA BRIEF:
+  - Frontend sabke browser me jata hai, to env exposure ki chinta
+    thi. Clarify kiya: VITE_* vars bundle me plain embed hote hain,
+    par aapke saare VITE_ values intentionally safe-to-expose hain
+    (Supabase publishable key, URL, brand, drive link, flag).
+    Secrets sirf Supabase Edge Function secrets me rehne chahiye
+    (RAZORPAY_KEY_ID / RAZORPAY_SECRET / webhook secret).
+  - GitHub Pages pe deploy, free SSL, custom domain cpamaster.online
+    (Hostinger se liya).
+
+KYA KYA HUA:
+
+  a) Repo setup
+     - GitHub username: devopsghazali
+     - Repo: https://github.com/devopsghazali/cpamaster (public)
+     - Git identity (local scope only, repo ke andar):
+         user.name  = devopsghazali
+         user.email = devopsghazali@gmail.com
+     - Branch: main
+     - Initial commit: pura project + supabase scaffold + GH Pages
+       config + CNAME.
+
+  b) .gitignore update
+     - .env, .env.local, .env.*.local add kiye. .env file abhi
+       local me exist nahi karta (defaults config.js me baked hain).
+
+  c) vite.config.js
+     - base: '/' set kiya (custom domain root deploy ke liye).
+
+  d) public/CNAME
+     - cpamaster.online rakha — GH Pages auto pick karega custom
+       domain ke liye.
+
+  e) .github/workflows/deploy.yml
+     - Node 20 + npm ci + npm run build + upload-pages-artifact +
+       deploy-pages action.
+     - VITE_* env vars workflow me GitHub Secrets se inject hote
+       hain (agar set karoge to). Abhi unset hone par config.js ke
+       defaults use honge.
+
+  f) GitHub Pages enable
+     - POST /repos/devopsghazali/cpamaster/pages body:
+         { "build_type": "workflow" }
+     - Pages URL: https://devopsghazali.github.io/cpamaster/
+     - Final URL: https://cpamaster.online (CNAME se).
+
+  g) supabase functions/_shared/courses.ts align
+     - 2-course purana catalog hata ke single cpa-mastery course
+       (amount 239900, currency INR, drive link fallback) rakha.
+     - COURSE_A_DRIVE_URL / COURSE_B_DRIVE_URL hata, CPA_MASTERY_DRIVE_URL
+       env key lagayi.
+
+  h) Pehli Actions run fail hui (Configure Pages step):
+     - Cause: push ke turant baad workflow trigger hua jabki Pages
+       API enable call baad me hui.
+     - Fix: workflow_dispatch se dobara trigger kiya, expected
+       ab success.
+
+DNS SETUP (USER KO HOSTINGER ME KARNA HAI):
+  - A records (apex cpamaster.online):
+        185.199.108.153
+        185.199.109.153
+        185.199.110.153
+        185.199.111.153
+  - OR CNAME (agar www subdomain bhi use karna ho):
+        www -> devopsghazali.github.io
+  - Propagation: 10-60 min usually.
+  - Verification: GitHub Pages settings me "DNS check" green hona
+    chahiye, phir "Enforce HTTPS" automatically available.
+
+SECURITY NOTES:
+  - Pehla GitHub token public chat me paste hua (leaked).
+    https://github.com/settings/tokens pe ja ke turant REVOKE/DELETE
+    karo, naya token banao (scope: repo + workflow). Share mat karo.
+  - .env file abhi repo me nahi hai. Agar banate ho to NEVER commit
+    karna — .gitignore me already protected hai.
+  - Supabase secrets (RAZORPAY_*) sirf `supabase secrets set ...`
+    se set karna, repo me kabhi bhi nahi.
+
+NEXT STEPS (agle chat / user khud):
+  - Naya token rotate.
+  - Hostinger me DNS A records add.
+  - GitHub repo Settings -> Secrets -> VITE_* values set
+    (agar default se alag chahiye).
+  - Supabase edge functions deploy + secrets set.
+  - VITE_PAYMENT_MODE=live kar ke real Razorpay checkout test.
+
 ================================================================
   End of project.txt
 ================================================================
