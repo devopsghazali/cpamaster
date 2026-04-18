@@ -1,0 +1,411 @@
+================================================================
+  DarkWorld Official — Premium CPA Marketing Landing Page
+  Project Summary (Hinglish)
+================================================================
+
+----------------------------------------------------------------
+1. USER NE KYA COMMAND DIYA THA (Original Brief)
+----------------------------------------------------------------
+
+Reference: Ek image di thi jo DarkWorld Official ka Linktree-style
+page dikhati thi (logo + green dot + brand name + description +
+6 stacked CTA buttons + footer).
+
+User ki exact request (summary):
+
+- "website_react" folder me React project banana hai.
+- Linktree jaisa simple clone NAHI — usse bohot premium, unique,
+  authority-building, luxury personal brand jaisa.
+- Feel: "Luxury Personal Brand + Authority Website + CPA Trust
+  Platform", NOT "basic social links page".
+
+Tech stack (user ne specify kiya):
+- React.js
+- Tailwind CSS
+- Framer Motion
+- Mobile-first responsive
+- Dark mode + Light mode
+- Smooth premium animations, modern typography
+- Soft shadows, glassmorphism, clean grid background
+- Professional spacing, high-end aesthetics
+
+TOP SECTION:
+  1. Circular premium logo
+  2. Small green online status indicator
+  3. Brand name = "DarkWorld Official"
+  4. Subtitle = "CPA Marketing & Online Income"
+  5. Short trust-building description
+
+MAIN CTA BUTTONS (6 cards — stacked vertically):
+  1. Join DigitalSchool
+  2. Join Telegram Community
+  3. Subscribe Our YouTube
+  4. Free Guide
+  5. Follow on Instagram
+  6. Personal Chat with Me
+
+Har card me: left icon, title, hover effect, right arrow icon,
+glass-style premium design.
+
+BUTTON CLICK ANIMATION (very important):
+- Click pe left side se color-fill animation start ho.
+- Smooth liquid-style fill pura card cover kare.
+- Animation complete hone ke baad redirect ho.
+- Per-button alag color:
+    DigitalSchool  = Purple
+    Telegram       = Blue
+    YouTube        = Red
+    Free Guide     = Green
+    Instagram      = Gradient
+    Personal Chat  = Cyan
+
+TRUST BOOSTERS:
+- Subtle trust bar, professional footer, copyright, credibility.
+
+BACKGROUND:
+- Soft grid pattern, subtle glowing particles, minimal gradients.
+- Elegant, premium, NOT flashy.
+
+FINAL GOAL:
+- User ko instantly feel ho ki creator genuine + trustworthy hai.
+- Design silently trust sell kare.
+
+----------------------------------------------------------------
+2. CLARIFICATIONS (Planning ke time user se puche)
+----------------------------------------------------------------
+
+- Brand identity: "DarkWorld Official" reference se use karni hai.
+- Extras: sirf subtle Trust Bar include karna. WhatsApp float,
+  testimonials, aur YouTube preview skip.
+- Link target: CTA buttons naye tab me open honge (new tab).
+
+Plan approve hone ke baad implementation start ki.
+
+----------------------------------------------------------------
+3. KYA KYA BANAYA (Implementation Steps)
+----------------------------------------------------------------
+
+STEP 1 — Project Scaffold:
+  > cd website_react
+  > npm create vite@latest . -- --template react --yes
+  > npm install
+  Vite + React 19 project ready.
+
+STEP 2 — Dependencies install:
+  > npm install motion lucide-react
+      - motion       : Framer Motion (animations)
+      - lucide-react : clean modern icons
+  > npm install -D tailwindcss @tailwindcss/vite
+      - Tailwind CSS v4 (latest, with Vite plugin)
+
+STEP 3 — Vite + Tailwind Setup:
+  - vite.config.js me tailwindcss() plugin add kiya.
+  - src/index.css me Tailwind v4 import + custom theme tokens
+    (@theme block) + utility classes (glass-card, bg-grid-light,
+    bg-grid-dark, mask-fade, text-gradient-brand, shadow tokens).
+  - Dark mode: .dark class-based, main.jsx pe system preference
+    + localStorage ("dw-theme") read karke initial apply.
+
+STEP 4 — index.html polish:
+  - Title, description, theme-color meta, Inter font preload.
+
+STEP 5 — Cleanup:
+  - Default Vite scaffold files (App.css, assets/*) delete kiye.
+
+STEP 6 — Assets:
+  - public/logo.svg : Custom DarkWorld monogram "D" shape with
+    dark gradient background + subtle purple->cyan accent stroke.
+  - public/favicon.svg : compact version of the logo.
+
+STEP 7 — Data layer:
+  - src/data/links.js : 6 CTA cards ka array
+    (id, title, subtitle, href, icon, fill, iconBg).
+  - Per-button fill color plan ke hisab se set kiya.
+  - Instagram ke liye multi-stop brand gradient.
+  - href currently "#" placeholder — user later replace karega.
+
+STEP 8 — Components banaye (src/components/):
+
+  a) Background.jsx
+     - Fixed full-screen, -z-10.
+     - Grid pattern (light/dark variants) with radial mask fade.
+     - 4 blurred gradient "particles" slowly animating (x, y,
+       scale loops via Framer Motion).
+     - Top + bottom soft gradient overlays for depth.
+     - useReducedMotion respect karta hai.
+
+  b) ThemeToggle.jsx
+     - Fixed top-right glass pill button.
+     - Sun/Moon icon swap with rotate + fade (AnimatePresence).
+     - localStorage me theme persist.
+
+  c) ProfileHeader.jsx
+     - Logo (96-112px circular) with soft glow halo.
+     - Animated green status dot (ping animation).
+     - Brand name "DarkWorld Official" (bold, tight tracking).
+     - Subtitle with blue->purple->cyan gradient text.
+     - 3-line trust-building description.
+     - Stagger-fade-in on mount.
+
+  d) TrustBar.jsx
+     - 3 micro badges: "Active creator · Verified community ·
+       Replies within 24h".
+     - Uppercase tracking, emerald dots — whisper-quiet authority.
+
+  e) LinkCard.jsx  (core piece — liquid fill animation)
+     - Glassmorphism card: blur + semi-transparent bg + soft
+       border + soft shadow + rounded-2xl.
+     - Layout: [icon tile] [title + subtitle] [arrow icon].
+     - Hover: slight lift (y: -2) + deeper shadow.
+     - Click pe:
+         * Overlay motion.div clipPath animate:
+             inset(0 100% 0 0)  ->  inset(0 0% 0 0)
+           (left se right tak smooth liquid fill)
+         * Duration ~550ms, ease [0.65, 0, 0.35, 1].
+         * onAnimationComplete pe window.open(href, "_blank").
+         * Double-click guard (filling state).
+     - Fill hote time text + icon white ho jate hain.
+     - Keyboard support: Enter / Space bhi trigger karta hai.
+     - useReducedMotion respect: animation skip + direct redirect.
+
+  f) LinksSection.jsx
+     - 6 LinkCards ko stagger-fade me render karta hai.
+
+  g) Footer.jsx
+     - Centered "© 2026 DarkWorld Official" + tagline.
+
+STEP 9 — App.jsx compose:
+  - <Background /> + <ThemeToggle /> + <main>:
+    ProfileHeader -> TrustBar -> LinksSection -> Footer.
+  - Parent motion.main variants se stagger children trigger.
+  - Max-width 460px (mobile), 520px (sm+). Mobile-first.
+
+STEP 10 — Build + Run verify:
+  - `npm run build` → pehli baar fail hua kyunki latest
+    lucide-react se brand icons (Youtube, Instagram) hata diye
+    gaye hain.
+  - Fix: icon swap →
+      Youtube   -> CirclePlay
+      Instagram -> Camera
+  - Rebuild success:
+      dist/index.html     1.03 kB
+      dist/assets css     26.30 kB
+      dist/assets js      328.95 kB  (105 kB gzip)
+  - `npm run dev` → http://localhost:5173 ready.
+
+----------------------------------------------------------------
+4. FINAL PROJECT STRUCTURE
+----------------------------------------------------------------
+
+website_react/
+├── index.html
+├── package.json
+├── vite.config.js
+├── public/
+│   ├── favicon.svg
+│   └── logo.svg
+├── src/
+│   ├── main.jsx                (dark-mode bootstrap)
+│   ├── App.jsx                 (page composition + stagger)
+│   ├── index.css               (Tailwind v4 + theme tokens)
+│   ├── components/
+│   │   ├── Background.jsx
+│   │   ├── ThemeToggle.jsx
+│   │   ├── ProfileHeader.jsx
+│   │   ├── TrustBar.jsx
+│   │   ├── LinkCard.jsx        (liquid-fill click animation)
+│   │   ├── LinksSection.jsx
+│   │   └── Footer.jsx
+│   └── data/
+│       └── links.js            (6 CTA link configs — edit hrefs here)
+└── project.txt                 (this file)
+
+----------------------------------------------------------------
+5. KAISE RUN KARNA HAI
+----------------------------------------------------------------
+
+  > cd website_react
+  > npm install      (pehli baar only)
+  > npm run dev      (dev server → http://localhost:5173)
+  > npm run build    (production build → dist/)
+  > npm run preview  (preview production build)
+
+Real URLs set karne ke liye:
+  -> src/data/links.js open karo
+  -> har object ka "href: '#'" apne Telegram / YouTube /
+     Instagram / WhatsApp / Digital School link se replace karo.
+
+Logo change karne ke liye:
+  -> public/logo.svg replace karo (koi bhi square image bhi
+     chalegi, naam same rakho).
+
+Brand text change karne ke liye:
+  -> src/components/ProfileHeader.jsx me name, subtitle,
+     description update karo.
+
+----------------------------------------------------------------
+6. KEY DESIGN DECISIONS (kyu aise banaya)
+----------------------------------------------------------------
+
+- clipPath se liquid fill: ye CSS transform se zyada smooth
+  dikhta hai, aur per-card color/gradient dono support karta hai
+  (solid color + Instagram ka gradient dono kaam karte hain).
+
+- Trust bar deliberately whisper-soft rakha (small uppercase
+  tracking, muted color) — loud badges trust kam karte hain,
+  quiet ones authority build karte hain.
+
+- Grid background + blurred gradient particles: depth deta hai
+  without noise. mask-fade se edges me softly disappear hota hai.
+
+- Tailwind v4 (@theme + @custom-variant): latest idiomatic
+  setup, no tailwind.config.js file required.
+
+- motion/react (naya import path): Framer Motion ka current
+  packaging — "motion" package use ho raha hai, purana
+  "framer-motion" naam nahi.
+
+- Reduced-motion users ke liye animation skip + direct redirect
+  (accessibility).
+
+----------------------------------------------------------------
+7. JOIN COURSES FLOW + PAYMENT SCAFFOLD (is chat me)
+----------------------------------------------------------------
+
+USER KA NAYA BRIEF (summary):
+  - React frontend + Supabase already exist, continue karo.
+  - Join Courses internal page banani hai (route /join-courses).
+  - SIRF EK course dikhana hai (do nahi). Content joincourses.txt se.
+  - Payment structure ready karo par Razorpay full integrate NAHI
+    abhi — placeholder mode me test ho sake.
+  - Env vars: RAZORPAY_KEY_ID, RAZORPAY_SECRET (edge function secrets).
+  - Validation + loading + error states saaf hone chahiye.
+  - Backend table course_purchases already existing — recreate nahi.
+  - Success route /success (pehle /payment/success tha).
+  - Demo data globally nahi, sirf Join Courses page ke andar mock
+    handling allowed — testing ke liye.
+
+KYA KYA HUA:
+
+  a) Routing + link wiring
+     - App.jsx: /payment/success ko rename karke /success kiya.
+     - data/links.js: "Join Course" card ab internal href
+       "/join-courses" pe jata hai (internal: true) — LinkCard
+       pehle se internal support karta hai (navigate use karta hai).
+     - Baaki 5 social CTA cards (YouTube, Telegram, Instagram,
+       Free Guide, Clear Doubts) abhi "#" placeholder pe hain.
+
+  b) Single course data (src/data/courses.js)
+     - 2 courses (A/B) hata ke ek single CPA MASTERY course rakha.
+       * Price: 2399 (amount: 239900 paise)
+       * Badge: "3 Months Support"
+       * Highlight: "One-Time Payment – No Extra Charges.
+         No Ads Budget Required."
+       * 10 learning points (joincourses.txt ke exact feature list).
+       * 4 benefits (instant drive delivery, lifetime access,
+         3-month mentorship, server-side signature verify).
+     - primaryCourse export bhi add kiya (PaymentSuccessPage fallback).
+
+  c) Join Courses page (src/pages/JoinCoursesPage.jsx)
+     - Grid lg:grid-cols-2 hata ke centered single card layout
+       (max-w-3xl) kiya.
+     - Hero copy refresh: "One focused program built for real
+       CPA execution."
+     - Same 3 legal cards (Secure payment policy / Refund policy /
+       Support) niche rahe, RecentBuyersPopup bhi include.
+
+  d) Course purchase card (src/components/CoursePurchaseCard.jsx)
+     - Full rewrite with production-ready validation + placeholder
+       mode branch.
+     - Validation:
+         * Name: min 2 chars
+         * Email: regex (simple RFC-ish)
+         * Phone: 8-15 digits, optional + prefix
+     - Duplicate-submit guard: busy + completed state, inputs
+       disable during checkout.
+     - Error banner with role="alert" for screen readers.
+     - Highlight strip (Sparkles icon) agar course.highlight hai.
+     - Trust chips: Server-side order creation, Signature
+       verification, + "Placeholder mode" chip jab
+       VITE_PAYMENT_MODE=placeholder ho.
+     - Placeholder flow: simulatePlaceholderPurchase() call karke
+       direct /success pe redirect (no Razorpay script load, no
+       network call, no DB write).
+     - Live flow: createOrder -> launchRazorpayCheckout ->
+       verifyPayment -> /success (same as before).
+
+  e) Payment lib (src/lib/payment.js)
+     - Edge function invoker same rakha.
+     - createOrder / verifyPayment: placeholder mode me clear
+       error throw karte hain taaki koi accidentally production
+       flow na chala de.
+     - fetchRecentBuyers: placeholder me empty array return
+       (popup silently hide ho jata hai).
+     - simulatePlaceholderPurchase(): ek complete purchase payload
+       banata hai (purchaseId, orderId, paymentId mocked with
+       timestamp) — ye success page par populate hota hai.
+
+  f) Razorpay loader (src/lib/razorpay.js)
+     - Koi change nahi — module pre-existing tha, production ready.
+       Script lazy-load + promise-based checkout open.
+
+  g) Config (src/lib/config.js)
+     - Naye exports:
+         * BRAND_NAME            (default 'CPAMaster')
+         * GOOGLE_DRIVE_LINK     (joincourses.txt ka link default)
+         * PAYMENT_MODE          ('placeholder' default)
+         * isPlaceholderMode()   helper
+     - Existing SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY,
+       supportPhoneDisplay wahi rahe.
+
+  h) .env.example
+     - Naye keys add kiye:
+         VITE_BRAND_NAME
+         VITE_GOOGLE_DRIVE_LINK
+         VITE_PAYMENT_MODE=placeholder
+     - Backend-only secrets (frontend read nahi karta) documented:
+         RAZORPAY_KEY_ID
+         RAZORPAY_SECRET
+         RAZORPAY_WEBHOOK_SECRET
+       With `supabase secrets set` commands.
+
+  i) Payment success page (src/pages/PaymentSuccessPage.jsx)
+     - Drive link + course name + support phone ke liye fallback
+       add kiya (agar purchase payload missing hai to bhi page
+       kaam kare).
+     - Amber placeholder-mode banner dikhta hai jab purchase
+       status === 'placeholder' ya VITE_PAYMENT_MODE !== 'live'.
+     - Purchase details card conditional: sirf tab dikhta hai
+       jab purchase object mila.
+
+  j) Build verification
+     - `npm run build` pass:
+         dist/index.html     1.07 kB
+         dist/assets css     52.22 kB  (9.40 kB gzip)
+         dist/assets js      416.72 kB (132.11 kB gzip)
+
+BACKEND (PENDING — next chat ke liye):
+  - Supabase edge functions still need to be written + deployed:
+      * create_order       (Razorpay order + course_purchases insert)
+      * verify_payment     (HMAC-SHA256 signature verify + update)
+      * razorpay_webhook   (server-side payment.captured hook)
+      * recent_buyers      (public readonly list for popup)
+  - Frontend placeholder mode chhod ke VITE_PAYMENT_MODE=live kar
+    dene se wahi endpoints call honge — frontend me koi extra
+    change nahi chahiye hoga.
+  - course_purchases table schema user ke paas already hai; naya
+    nahi banana.
+
+ROUTES SUMMARY (current):
+  /               -> LandingPage
+  /join-courses   -> JoinCoursesPage (single course)
+  /success        -> PaymentSuccessPage
+
+ENV SWITCH:
+  - Testing / UI preview:   VITE_PAYMENT_MODE=placeholder
+  - Real payments:          VITE_PAYMENT_MODE=live  (edge functions
+                            + Razorpay secrets must be deployed)
+
+================================================================
+  End of project.txt
+================================================================

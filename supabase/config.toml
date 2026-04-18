@@ -1,0 +1,13 @@
+project_id = "orrozpaelhogpqemngfj"
+
+[functions.create_order]
+verify_jwt = false
+
+[functions.verify_payment]
+verify_jwt = false
+
+[functions.razorpay_webhook]
+verify_jwt = false
+
+[functions.recent_buyers]
+verify_jwt = false
