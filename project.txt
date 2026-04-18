@@ -497,6 +497,69 @@ NEXT STEPS (agle chat / user khud):
   - Supabase edge functions deploy + secrets set.
   - VITE_PAYMENT_MODE=live kar ke real Razorpay checkout test.
 
+----------------------------------------------------------------
+9. LANDING PAGE PREMIUM SECTIONS (joincourses.txt + demo style)
+----------------------------------------------------------------
+
+Date: 2026-04-18
+
+User ki exact request: "joincourses.txt padho aur aisa banao,
+screenshot/demo folder jaisa feel rakho, aur screenshot/ folder
+me demo chodh ke jitne earning proofs hain sab Student Success
+Showcase section me laga do."
+
+KYA BANAYA:
+
+  a) Naye data files
+     - src/data/proofs.js   -> 25 verified earning screenshots
+         (src path: ${import.meta.env.BASE_URL}proofs/<file>)
+     - src/data/networks.js -> 4 CPA networks (AdBlueMedia,
+         OGAds, Affmine, CPALead) with gradient accents.
+     - src/data/faqs.js     -> 4 Q&A (beginner friendly, no ads,
+         lifetime access + 3 months mentorship, drive delivery).
+
+  b) Naye section components (glass-panel + motion animations)
+     - WhyChooseSection.jsx
+         2-column: left pillars (Target/Zap/Sparkles),
+         right gradient card "$15,000+ community-wide" +
+         Telegram proof CTA (https://t.me/MkArmy01).
+     - NetworksSection.jsx
+         4-grid cards, gradient top-bar + brand-initial badge.
+     - ProofGallery.jsx
+         sm:2 / md:3 / lg:4 grid. Aspect 9:16 image cards +
+         lazy loading. Click -> fullscreen lightbox modal with
+         keyboard nav (Esc / Arrow keys), body scroll lock.
+     - FaqSection.jsx
+         Accordion with motion height/opacity transition,
+         openIndex state (pehla FAQ default open).
+
+  c) Screenshots move
+     - 25 non-demo screenshots git mv se
+       screenshot/Screenshot_2025-*.jpeg + Screenshot_2026-*.jpeg
+       -> public/proofs/ me shift.
+     - public/proofs/ folder Vite build me as-is copy hota hai,
+       base URL aware URL serve hoti hai GitHub Pages pe bhi.
+     - screenshot/demo/ folder untouched (reference ke liye).
+
+  d) LandingPage.jsx integration
+     - Existing 2-col hero grid (ProfileHeader + LinksSection)
+       intact hai.
+     - Us grid ke NEECHE naye sections is order me add:
+         WhyChoose -> Networks -> ProofGallery -> FAQ -> Footer.
+     - Footer ab container ke end pe, overall max-width
+       [1180px] grid ke saath align.
+
+  e) Build verify
+     - npm run build pass (vite 8.0.8, 2156 modules,
+       432 kB JS / 61 kB CSS gzipped 135 + 10 kB).
+     - No errors, sirf 1 tailwind class hint (max-w-[1180px]
+       canonical suggestion — ignore, custom fixed width chahiye).
+
+DEPLOY FLOW:
+  - git add -A && git commit -m "..." && git push origin main
+  - GitHub Actions deploy.yml auto-trigger hota hai, Pages
+    pe new build 1-2 min me live (cpamaster.online).
+
 ================================================================
   End of project.txt
 ================================================================
