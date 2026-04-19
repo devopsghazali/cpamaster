@@ -1235,5 +1235,100 @@ USER KO YAAD DILANA:
     verify kar lena taa ki flow confirm ho, phir live.
 
 ================================================================
+SESSION — 2026-04-19 (Home UI refresh + mobile perf + test mode)
+================================================================
+
+CONTEXT:
+  Vercel live pe deploy ho chuka tha (previous session). User
+  production test karne ki tayyari me — UI polish + mobile lag
+  fix + Razorpay ko test mode me switch karke validate karna.
+
+1. HOME UI LINKS UPDATE (src/data/links.js):
+  - Free Guide card hata diya (04 slot se).
+  - WhatsApp community card add kiya (id: whatsapp, Users icon,
+    emerald green gradient). Href:
+      https://chat.whatsapp.com/IWyGJtc47U997DONukzHEO
+  - YouTube subtitle: "Weekly case studies" → "Subscribe @themkbhai".
+    Real URL wired: https://youtube.com/@themkbhai?si=HTL2xYprzoIyns8Q
+  - Instagram subtitle: "Behind the scenes" → "Join community".
+    Real URL: https://www.instagram.com/the_mkbhai?igsh=...
+  - Telegram real URL: https://t.me/MkArmy01
+  - Doubts card ka href bhi WhatsApp community par point kiya
+    (1-on-1 chat ki jagah community se start).
+  - Order ab: Course → YouTube → Telegram → Instagram →
+    WhatsApp → Doubts.
+
+  NOTE: FreeGuidePage route (App.jsx) abhi chhoda hai orphan
+  (koi link nahi jaata). Future me delete ya archive kar sakte.
+
+2. MOBILE PERFORMANCE FIX (Background.jsx):
+  - useIsMobile hook (matchMedia max-width:767px) add kiya.
+  - Mobile par orbs: 4 → 1 (sirf pehla hero orb).
+  - Second orb group entirely skip on mobile.
+  - Floaters (6 pulsing dots) mobile par completely skip.
+  - Parallax scroll-transform skip on mobile.
+  - pointermove listener bhi mobile par attach hi nahi hoti
+    (desktop-only hover parallax).
+  - Reason: phone par radial-gradient blur-3xl × 4 + spring
+    scroll + floaters = GPU compositing ka bahut load,
+    hang-jaisa feel hota tha.
+
+3. FRAMER FILTER:BLUR CLEANUP (pichhle session me shuru,
+  ab tak 15 files saaf):
+  - animations.js — fadeRise, fadeRiseSmall, fadeScale,
+    cardItem, pageEnter — saare variants se filter:'blur(Xpx)'
+    strip. Durations 0.75s → 0.45s tight.
+  - Inline filter:blur patterns removed from:
+    PaymentSuccessPage, FreeGuidePage, WhyChooseSection,
+    CommunityCta, Footer, FaqSection, CoursePurchaseCard,
+    ProfileHeader, VideoSection, RefundPolicySection,
+    LinkCard, HorizontalProofStrip, LinksSection,
+    NetworksSection.
+  - Root cause: CSS filter: blur() stacking context create
+    karta hai, usme position:fixed modals trap ho jaate the
+    (ApplyNowModal "blur hoke atak jata tha"). Plus mobile
+    GPU par ye bahut mehnga hai.
+
+4. RAZORPAY TEST MODE SWITCH (Supabase secrets):
+  - User test karne ke liye test keys de diye:
+      KEY_ID     = rzp_test_SfRA2qLuRp3VdF
+      KEY_SECRET = FMKDzr610JQ1IngXLVg8pDHt
+  - Supabase CLI se set:
+      supabase.exe secrets set RAZORPAY_KEY_ID=rzp_test_SfRA2qLuRp3VdF
+        RAZORPAY_KEY_SECRET=FMKDzr610JQ1IngXLVg8pDHt
+        --project-ref orrozpaelhogpqemngfj
+    (SUPABASE_ACCESS_TOKEN env var se auth)
+  - Successful — "Finished supabase secrets set."
+  - VITE_RAZORPAY_KEY_ID Vercel par hai ya nahi, farak nahi
+    padta — frontend keyId create_order response se lega
+    (getPublicRazorpayConfig backend me hai).
+  - Edge functions ko naya secret agle cold start par milega
+    (~1 min ke andar).
+
+5. LIVE KEYS BACKUP:
+  - Local file banayi: .local/razorpay-keys.txt
+    (gitignored via *.local glob pe line 13 of .gitignore —
+    koi naya entry nahi chahiye tha).
+  - Live keys safe rakhe:
+      KEY_ID     = rzp_live_SfF1mWDHWU4zSt
+      KEY_SECRET = Wr60fkI88PyGdYzBtl8K4TCy
+  - File me swap-back command bhi likhi hai.
+
+6. BUILD + COMMIT + PUSH:
+  - npm run build → 2157 modules, 446.25 KB JS, no errors.
+  - Git commit "home UI refresh + mobile perf + live link wiring"
+    (17 files, +130/-122). Pushed to origin/main.
+  - Vercel auto-deploy trigger ho gaya.
+
+USER KO YAAD DILANA:
+  - Test mode me 1-2 payments validate karo (card: 4111 1111
+    1111 1111, OTP 123456 type koi bhi test flow).
+  - Validation ho jaye to live keys wapas swap karne ke liye
+    .local/razorpay-keys.txt me command saved hai.
+  - DB migration + Razorpay webhook wali task abhi bhi pending
+    hai (ISP port 5432 block ki wajah se Supabase SQL editor
+    me manual run karni thi).
+
+================================================================
   End of project.txt
 ================================================================
