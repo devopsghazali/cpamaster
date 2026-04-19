@@ -40,11 +40,11 @@ export default function CommunityCta() {
   return (
     <section className="mt-16 sm:mt-20">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="glass-panel relative overflow-hidden rounded-[32px] p-8 text-center sm:p-12"
+        initial={{ opacity: 0, y: 40, scale: 0.97, filter: 'blur(10px)' }}
+        whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.25 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        className="glass-panel relative overflow-hidden rounded-[32px] p-8 text-center will-change-transform-opacity sm:p-12"
       >
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
         <div className="absolute -right-24 -top-24 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />

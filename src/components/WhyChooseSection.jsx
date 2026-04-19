@@ -21,7 +21,13 @@ const pillars = [
 
 export default function WhyChooseSection() {
   return (
-    <section className="mt-16 sm:mt-20">
+    <motion.section
+      initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      viewport={{ once: true, amount: 0.15, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      className="mt-16 will-change-transform-opacity sm:mt-20"
+    >
       <div className="glass-panel relative overflow-hidden rounded-[32px] p-6 sm:p-10">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
         <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
@@ -41,14 +47,19 @@ export default function WhyChooseSection() {
             </p>
 
             <div className="mt-6 grid gap-3">
-              {pillars.map(({ icon: Icon, title, body }) => (
+              {pillars.map(({ icon: Icon, title, body }, idx) => (
                 <motion.div
                   key={title}
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/50 p-4 dark:bg-white/5"
+                  initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+                  whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    delay: 0.08 * idx,
+                    duration: 0.6,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  whileHover={{ y: -2 }}
+                  className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/50 p-4 transition-shadow hover:shadow-[0_16px_40px_-20px_rgba(15,23,42,0.25)] dark:bg-white/5"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
                     <Icon size={18} />
@@ -99,6 +110,6 @@ export default function WhyChooseSection() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   )
 }

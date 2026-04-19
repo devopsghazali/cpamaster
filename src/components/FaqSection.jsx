@@ -8,7 +8,13 @@ export default function FaqSection() {
 
   return (
     <section className="mt-16 sm:mt-20">
-      <div className="mx-auto max-w-3xl text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-3xl text-center"
+      >
         <span className="chip mx-auto">
           <HelpCircle size={12} className="text-amber-500" />
           <span>Frequently asked</span>
@@ -17,7 +23,7 @@ export default function FaqSection() {
           Quick answers before{' '}
           <span className="text-gradient-brand">you enroll.</span>
         </h2>
-      </div>
+      </motion.div>
 
       <div className="mx-auto mt-10 max-w-3xl space-y-3">
         {faqs.map((faq, index) => {
@@ -25,11 +31,16 @@ export default function FaqSection() {
           return (
             <motion.div
               key={faq.q}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.04 * index, duration: 0.45 }}
-              className="glass-card overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{
+                delay: 0.07 * index,
+                duration: 0.6,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              whileHover={{ y: -2 }}
+              className="glass-card overflow-hidden rounded-2xl transition-shadow hover:shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)]"
             >
               <button
                 type="button"

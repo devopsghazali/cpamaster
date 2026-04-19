@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import Background from '../components/Background'
 import ThemeToggle from '../components/ThemeToggle'
 import ProfileHeader from '../components/ProfileHeader'
-import VideoSection from '../components/VideoSection'
 import LinksSection from '../components/LinksSection'
 import Footer from '../components/Footer'
 import RecentBuyersPopup from '../components/RecentBuyersPopup'
@@ -11,7 +10,7 @@ const leftVariants = {
   hidden: { opacity: 1 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.08 },
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
   },
 }
 
@@ -31,7 +30,6 @@ export default function LandingPage() {
             className="relative lg:sticky lg:top-14 lg:h-fit lg:self-start"
           >
             <ProfileHeader />
-            <VideoSection />
           </motion.section>
 
           <div className="relative pt-2 lg:pt-6">

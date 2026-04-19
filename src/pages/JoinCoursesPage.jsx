@@ -43,9 +43,9 @@ export default function JoinCoursesPage() {
           </div>
         </section>
 
+        <HorizontalProofStrip />
         <WhyChooseSection />
         <NetworksSection />
-        <HorizontalProofStrip />
         <RefundPolicySection />
         <FaqSection />
         <CommunityCta />

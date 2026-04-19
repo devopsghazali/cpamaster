@@ -2,8 +2,13 @@ import { motion } from 'motion/react'
 import { Heart } from 'lucide-react'
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 18, filter: 'blur(6px)' },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function Footer() {
@@ -12,7 +17,7 @@ export default function Footer() {
       variants={itemVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.4 }}
       className="mt-12 flex flex-col items-center gap-1.5 pb-10 text-center text-xs text-slate-500 dark:text-slate-500"
     >
       <div className="flex items-center gap-2.5">

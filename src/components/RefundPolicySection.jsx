@@ -32,7 +32,13 @@ const clauses = [
 export default function RefundPolicySection() {
   return (
     <section id="refund-policy" className="mt-16 scroll-mt-20 sm:mt-20">
-      <div className="mx-auto max-w-3xl text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-3xl text-center"
+      >
         <span className="chip mx-auto">
           <ShieldAlert size={12} className="text-rose-500" />
           <span>Refund & Cancellation Policy</span>
@@ -41,7 +47,7 @@ export default function RefundPolicySection() {
           Transparent policy.{' '}
           <span className="text-gradient-brand">No hidden surprises.</span>
         </h2>
-      </div>
+      </motion.div>
 
       <motion.article
         initial={{ opacity: 0, y: 24 }}
@@ -81,7 +87,18 @@ export default function RefundPolicySection() {
 
           <ol className="relative mt-7 space-y-5 pl-2">
             {clauses.map((clause, index) => (
-              <li key={clause.title} className="flex gap-4">
+              <motion.li
+                key={clause.title}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{
+                  delay: 0.06 * index,
+                  duration: 0.55,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="flex gap-4"
+              >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 font-display text-sm font-bold text-slate-950 ring-1 ring-amber-800/20 dark:bg-amber-200/20 dark:text-amber-100">
                   {index + 1}
                 </div>
@@ -93,7 +110,7 @@ export default function RefundPolicySection() {
                     {clause.body}
                   </p>
                 </div>
-              </li>
+              </motion.li>
             ))}
           </ol>
 

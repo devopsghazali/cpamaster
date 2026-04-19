@@ -1,5 +1,11 @@
 import { useEffect, useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'motion/react'
 
 const orbs = [
   { size: 520, startX: -140, startY: -160, color: 'rgba(139, 92, 246, 0.42)', dur: 28, dir: 1 },
@@ -17,25 +23,41 @@ const floaters = [
   { size: 5, left: '88%', top: '52%', color: '#fbbf24', dur: 12 },
 ]
 
+const springConfig = { stiffness: 60, damping: 20, mass: 0.6 }
+
 export default function Background() {
   const reduce = useReducedMotion()
   const ref = useRef(null)
   const { scrollY } = useScroll()
-  const y1 = useTransform(scrollY, [0, 1200], [0, -120])
-  const y2 = useTransform(scrollY, [0, 1200], [0, 180])
+
+  const rawY1 = useTransform(scrollY, [0, 1600], [0, -180])
+  const rawY2 = useTransform(scrollY, [0, 1600], [0, 240])
+  const rawY3 = useTransform(scrollY, [0, 1600], [0, -90])
+  const y1 = useSpring(rawY1, springConfig)
+  const y2 = useSpring(rawY2, springConfig)
+  const y3 = useSpring(rawY3, springConfig)
+
+  const gridOpacity = useTransform(scrollY, [0, 600], [1, 0.55])
 
   useEffect(() => {
     if (reduce) return
     const el = ref.current
     if (!el) return
+    let raf = 0
     const onMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2
-      const y = (e.clientY / window.innerHeight - 0.5) * 2
-      el.style.setProperty('--px', x.toFixed(3))
-      el.style.setProperty('--py', y.toFixed(3))
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2
+        const y = (e.clientY / window.innerHeight - 0.5) * 2
+        el.style.setProperty('--px', x.toFixed(3))
+        el.style.setProperty('--py', y.toFixed(3))
+      })
     }
-    window.addEventListener('pointermove', onMove)
-    return () => window.removeEventListener('pointermove', onMove)
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      cancelAnimationFrame(raf)
+    }
   }, [reduce])
 
   return (
@@ -45,11 +67,17 @@ export default function Background() {
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       style={{ '--px': 0, '--py': 0 }}
     >
-      <div className="absolute inset-0 bg-grid-light mask-fade dark:hidden" />
-      <div className="absolute inset-0 hidden bg-grid-dark mask-fade dark:block" />
+      <motion.div
+        className="absolute inset-0 bg-grid-light mask-fade dark:hidden"
+        style={{ opacity: gridOpacity }}
+      />
+      <motion.div
+        className="absolute inset-0 hidden bg-grid-dark mask-fade dark:block"
+        style={{ opacity: gridOpacity }}
+      />
 
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 will-change-transform-opacity"
         style={{ y: y1 }}
       >
         {orbs.slice(0, 2).map((o, i) => (
@@ -64,15 +92,15 @@ export default function Background() {
               top: o.startY !== null ? o.startY : undefined,
               bottom: o.bottom,
               background: `radial-gradient(circle at center, ${o.color}, transparent 65%)`,
-              translate: `calc(var(--px) * ${20 * o.dir}px) calc(var(--py) * ${14 * o.dir}px)`,
+              translate: `calc(var(--px) * ${24 * o.dir}px) calc(var(--py) * ${16 * o.dir}px)`,
             }}
             animate={
               reduce
                 ? undefined
                 : {
-                    x: [0, 40 * o.dir, -20 * o.dir, 0],
-                    y: [0, -28, 20, 0],
-                    scale: [1, 1.08, 0.95, 1],
+                    x: [0, 48 * o.dir, -24 * o.dir, 0],
+                    y: [0, -30, 22, 0],
+                    scale: [1, 1.09, 0.95, 1],
                   }
             }
             transition={{ duration: o.dur, repeat: Infinity, ease: 'easeInOut' }}
@@ -80,7 +108,10 @@ export default function Background() {
         ))}
       </motion.div>
 
-      <motion.div className="absolute inset-0" style={{ y: y2 }}>
+      <motion.div
+        className="absolute inset-0 will-change-transform-opacity"
+        style={{ y: y2 }}
+      >
         {orbs.slice(2).map((o, i) => (
           <motion.div
             key={i}
@@ -93,15 +124,15 @@ export default function Background() {
               top: o.startY !== null ? o.startY : undefined,
               bottom: o.bottom,
               background: `radial-gradient(circle at center, ${o.color}, transparent 65%)`,
-              translate: `calc(var(--px) * ${16 * o.dir}px) calc(var(--py) * ${10 * o.dir}px)`,
+              translate: `calc(var(--px) * ${18 * o.dir}px) calc(var(--py) * ${12 * o.dir}px)`,
             }}
             animate={
               reduce
                 ? undefined
                 : {
-                    x: [0, -30 * o.dir, 18 * o.dir, 0],
-                    y: [0, 22, -16, 0],
-                    scale: [1, 1.06, 0.96, 1],
+                    x: [0, -32 * o.dir, 20 * o.dir, 0],
+                    y: [0, 24, -18, 0],
+                    scale: [1, 1.07, 0.96, 1],
                   }
             }
             transition={{ duration: o.dur, repeat: Infinity, ease: 'easeInOut' }}
@@ -109,28 +140,35 @@ export default function Background() {
         ))}
       </motion.div>
 
-      {!reduce &&
-        floaters.map((f, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: f.size,
-              height: f.size,
-              left: f.left,
-              top: f.top,
-              background: f.color,
-              boxShadow: `0 0 ${f.size * 3}px ${f.size / 2}px ${f.color}`,
-              opacity: 0.55,
-            }}
-            animate={{
-              y: [0, -18, 0, 18, 0],
-              x: [0, 8, -6, 4, 0],
-              opacity: [0.35, 0.7, 0.5, 0.75, 0.35],
-            }}
-            transition={{ duration: f.dur, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        ))}
+      {!reduce && (
+        <motion.div
+          className="absolute inset-0 will-change-transform-opacity"
+          style={{ y: y3 }}
+        >
+          {floaters.map((f, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: f.size,
+                height: f.size,
+                left: f.left,
+                top: f.top,
+                background: f.color,
+                boxShadow: `0 0 ${f.size * 3}px ${f.size / 2}px ${f.color}`,
+                opacity: 0.55,
+              }}
+              animate={{
+                y: [0, -22, 0, 18, 0],
+                x: [0, 10, -6, 4, 0],
+                opacity: [0.3, 0.75, 0.5, 0.75, 0.3],
+                scale: [1, 1.12, 1, 1.08, 1],
+              }}
+              transition={{ duration: f.dur, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          ))}
+        </motion.div>
+      )}
 
       <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-white/60 to-transparent dark:from-ink-950/80" />
       <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-white/70 to-transparent dark:from-ink-950/90" />

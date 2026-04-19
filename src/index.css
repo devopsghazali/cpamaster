@@ -39,10 +39,17 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
 
   html.dark {
     color-scheme: dark;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -295,5 +302,14 @@
 
   html.dark .noise {
     opacity: 0.04;
+  }
+
+  .will-change-transform-opacity {
+    will-change: transform, opacity;
+  }
+
+  .scroll-lift {
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 }

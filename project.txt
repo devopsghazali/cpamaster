@@ -1006,6 +1006,234 @@ DEPLOY NOTES:
       GitHub Pages wala DNS (4 A records to 185.199.*) Hostinger
       se remove karna hoga.
 
+----------------------------------------------------------------
+13. PREMIUM SCROLL ANIMATIONS + VIDEO REMOVAL + PROOFS REORDER +
+    LIVE RAZORPAY SWITCH
+----------------------------------------------------------------
+
+Date: 2026-04-19 (same day, shaam ko)
+
+USER BRIEF (Hinglish):
+  1. Pure website pe scroll-based premium animations chahiye —
+     Apple / Linear jaisa luxurious smooth feel. Har section scroll
+     pe alive ho, page upar ki taraf gracefully rise kare.
+  2. Home UI (main landing) se VideoSection hata do — abhi video
+     nahi daalna.
+  3. PaymentSuccessPage (drive link wala) se bhi video embed
+     hata do.
+  4. JoinCoursesPage pe Student Earning Proofs section ko
+     CoursePurchaseCard ke turant neeche le aao (pehle neeche
+     order me tha).
+  5. Razorpay LIVE keys diye (live_id + secret). Supabase +
+     Razorpay proper setup ho, VITE_PAYMENT_MODE=live chale,
+     flow: Apply Now → order create → Razorpay checkout → 2399
+     pay → DB me details save → /success pe Drive link + support
+     number dikhayi de.
+
+SECURITY (CRITICAL):
+  - User ne live Razorpay key_secret plain chat me bheja —
+    YEH COMPROMISED HAI. Tooling logs / AI transcripts me leak
+    ho sakta hai.
+  - User ko bola: Razorpay Dashboard → Settings → API Keys →
+    Regenerate Live Keys. Naya key_id + key_secret use karna
+    `supabase secrets set` ke through — repo me kabhi nahi.
+  - Repo me koi secret commit nahi hua. .env.local gitignored
+    hai, sirf public VITE_* placeholders rakhe.
+
+SCROLL ANIMATION WORK (src/):
+
+  a) Naya reusable animations lib — src/lib/animations.js
+     Premium variants export karta hai:
+       ease.premium    = [0.22, 1, 0.36, 1]
+       ease.cinematic  = [0.16, 1, 0.3, 1]
+       viewportOnce    = { once:true, amount:0.15, margin: -10% }
+       fadeRise        = opacity + y:36 + blur(8px) → 0.75s
+       fadeRiseSmall   = lighter variant (y:20, blur 6px)
+       fadeScale       = scale 0.97→1 + y:24 + blur(6)
+       sectionGroup    = stagger 0.1s, delayChildren 0.05s
+       listGroup       = stagger 0.08s
+       cardItem        = cards stagger reveal
+       pageEnter       = cinematic page transition (enter from top)
+     Kisi bhi naye section me plug-and-play use ho sakta hai.
+
+  b) index.css me:
+     - html { scroll-behavior: smooth; } (prefers-reduced-motion
+       pe auto fallback).
+     - .will-change-transform-opacity utility (GPU hint).
+     - .scroll-lift utility (translateZ(0) + backface hidden).
+
+  c) App.jsx — cinematic page transition:
+     - Purana: y -60 / y 0 / y -30, 0.5s
+     - Naya:  y -72 + blur(12px) → 0 + blur(0), 0.75s cinematic
+              ease [0.16, 1, 0.3, 1]
+     - Exit:  y -32 + blur(6px), 0.45s
+     - willChange hint for GPU compositing.
+     - Reduced-motion respect maintained.
+
+  d) Background.jsx — smoother parallax:
+     - useScroll + useSpring (stiffness 60, damping 20) applied
+       to 3 layers: y1 (top orbs), y2 (bottom orbs), y3 (floaters).
+     - Scroll range 0→1600px maps to 180/240/90px parallax.
+     - Grid opacity fades 1 → 0.55 on scroll.
+     - Pointer-move handler now raf-throttled (no jank).
+     - Floaters ko bhi subtle scroll parallax mila, plus scale
+       breathing animation added.
+
+  e) ProfileHeader.jsx:
+     - Halo glow ab independent breathing animation
+       (opacity 0.6↔1, scale 1↔1.06, 6s loop).
+     - Logo + name: y 22 + blur(8) + scale 0.96 → 1, 0.75s premium.
+
+  f) VideoSection.jsx: variants upgraded (y 40 + scale 0.97 +
+     blur 10px, 0.85s). [Note: ab LandingPage se import nahi hota
+     par component file retained hai for future use.]
+
+  g) LinksSection.jsx + LinkCard.jsx:
+     - Group stagger 0.09s, delayChildren 0.08.
+     - Header: y 24 + blur 10px, 0.8s.
+     - Cards: y 28 + scale 0.97 + blur 8px, 0.65s premium ease.
+     - Will-change-transform-opacity hint on motion wrappers.
+
+  h) Footer.jsx: y 18 + blur 6px, 0.7s premium.
+
+  i) WhyChooseSection.jsx:
+     - Outer section ab motion.section (y 40 + blur 10, 0.85s).
+     - Inner pillar cards: y 18 + blur 6, stagger 0.08s,
+       whileHover { y: -2 } + shadow lift.
+
+  j) NetworksSection.jsx:
+     - Header motion wrapper (y 28 + blur 8, 0.75s).
+     - Cards: y 32 + scale 0.96 + blur 8, stagger 0.09s,
+       whileHover { y: -4, scale 1.01 } + deeper shadow.
+
+  k) HorizontalProofStrip.jsx:
+     - Header + strip wrapper dono motion.divs.
+     - Per-card reveal on scroll: y 30 + scale 0.96, capped
+       stagger (max 8 × 0.06s delay so 25 cards don't wait
+       forever).
+     - Hover: y -4, scale 1.01, premium shadow lift.
+
+  l) RefundPolicySection.jsx:
+     - Header motion wrapper.
+     - Clauses <li> → <motion.li> with stagger 0.06s per clause.
+
+  m) FaqSection.jsx:
+     - Header motion wrapper (y 28 + blur 8, 0.75s).
+     - Each FAQ card: y 20 + blur 6 + stagger 0.07s,
+       whileHover { y: -2 } + shadow lift.
+
+  n) CommunityCta.jsx:
+     - Reveal upgraded: y 40 + scale 0.97 + blur 10, 0.85s
+       cinematic reveal.
+
+  o) CoursePurchaseCard.jsx:
+     - Entry: y 44 + scale 0.97 + blur 12px, 0.9s.
+     - Learning points ab <motion.li> with sequential x-fade
+       (0.04s stagger after 0.25s delay).
+     - whileHover { y: -5, scale 1.005 } + 40px shadow lift.
+
+  p) PaymentSuccessPage.jsx:
+     - Video iframe poora hata diya.
+     - Badge + heading + drive button + info grid sequentially
+       reveal (0.2s → 0.3s → 0.4s → 0.5s delays for cinematic
+       step-by-step feel).
+
+STRUCTURAL CHANGES:
+
+  a) LandingPage.jsx
+     - import VideoSection hata diya.
+     - <VideoSection /> JSX hata diya.
+     - Left column ab sirf <ProfileHeader /> (sticky on lg).
+     - Stagger timing slightly increased (0.1 / 0.1 vs 0.08 / 0.08)
+       since only 1 child now.
+
+  b) JoinCoursesPage.jsx — section reorder
+     - Pehle: Course → WhyChoose → Networks → Proofs → Refund
+              → FAQ → Community → Footer.
+     - Ab:    Course → Proofs → WhyChoose → Networks → Refund
+              → FAQ → Community → Footer.
+     - User ko enroll karne se pehle hi proofs dikh jaenge —
+       conversion boost.
+
+RAZORPAY / SUPABASE LIVE SETUP:
+
+  a) config.js default flip
+     - PAYMENT_MODE default 'placeholder' → 'live'.
+     - Env se override karo only agar staging testing.
+
+  b) .env.local (gitignored) banayi
+     - VITE_PAYMENT_MODE=live
+     - VITE_SUPPORT_PHONE=<blank, user fills>
+     - VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY
+       (already public-safe)
+     - VITE_GOOGLE_DRIVE_LINK + VITE_BRAND_NAME
+     - Secret values (RAZORPAY_KEY_SECRET, WEBHOOK_SECRET,
+       SERVICE_ROLE) DO NOT go here — only Supabase secrets.
+
+  c) Edge functions status (supabase/functions/):
+     - create_order      ✓ production-ready (HMAC-safe, row insert
+                           + Razorpay order create, returns keyId)
+     - verify_payment    ✓ HMAC-SHA256 signature check + amount
+                           validation + payment status check
+     - razorpay_webhook  ✓ signature verify + idempotent status
+                           update (payment.captured/failed)
+     - recent_buyers    ✓ RLS-safe masked buyer list
+     _shared/ helpers (razorpay.ts, crypto.ts, supabase.ts,
+     cors.ts, courses.ts) — all production code, no changes
+     needed.
+
+  d) SUPABASE_DEPLOY.md — complete rewrite
+     7-step guide:
+       1. Rotate leaked key (CRITICAL — do this first)
+       2. Run migration SQL in Supabase SQL editor
+       3. `supabase secrets set RAZORPAY_KEY_ID=... \
+            RAZORPAY_KEY_SECRET=... RAZORPAY_WEBHOOK_SECRET=... \
+            CPA_MASTERY_DRIVE_URL=... SUPPORT_PHONE=...`
+       4. `supabase functions deploy create_order verify_payment
+            razorpay_webhook recent_buyers --no-verify-jwt`
+       5. Razorpay Dashboard → Webhooks → add
+          https://orrozpaelhogpqemngfj.functions.supabase.co/razorpay_webhook
+          events payment.captured + payment.failed
+       6. Frontend env on Vercel (VITE_PAYMENT_MODE=live +
+          VITE_SUPPORT_PHONE)
+       7. End-to-end test (test mode first, then live 2399)
+
+  e) Expected live flow:
+     1. User → /join-courses
+     2. Course card ke neeche Student Earning Proofs visible
+        (conversion booster).
+     3. "Join Now – ₹2399" button click → ApplyNowModal open
+     4. Form submit → createOrder (edge fn) → row inserted
+        with status='created' + Razorpay order_id
+     5. Razorpay Checkout popup → 2399 pay
+     6. handler → verifyPayment (edge fn) → HMAC check +
+        payment amount verify → row updated status='verified',
+        drive_link populated
+     7. Navigate /success?data=<base64 payload>
+     8. Success page shows:
+          - "Payment successful. Your access is ready."
+          - Drive link button (opens in new tab)
+          - Course name + support phone in 2-column grid
+          - No video (hata diya as requested)
+     9. Webhook (razorpay_webhook) async confirms captured
+        status server-side (insurance net).
+
+BUILD VERIFY:
+  npm run build OK
+    dist/index.html           1.07 kB
+    dist/assets/index-*.css  76.64 kB (11.91 kB gzip)
+    dist/assets/index-*.js  446.19 kB (140.84 kB gzip)
+  2157 modules transformed, no errors.
+
+USER KO YAAD DILANA:
+  - Razorpay LIVE key_secret rotate karo (Dashboard → Settings
+    → API Keys → Regenerate). Purana compromised hai.
+  - Naye secret ko SIRF `supabase secrets set` ke through
+    daalna — kisi file me commit nahi.
+  - VITE_SUPPORT_PHONE set karna (.env.local + Vercel).
+  - Pehli baar test mode (rzp_test_*) me 1-2 transactions
+    verify kar lena taa ki flow confirm ho, phir live.
+
 ================================================================
   End of project.txt
 ================================================================

@@ -3,12 +3,13 @@ import { Play, Clock, Eye } from 'lucide-react'
 import { featuredVideo } from '../data/video'
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
+  hidden: { opacity: 0, y: 40, scale: 0.97, filter: 'blur(10px)' },
   show: {
     opacity: 1,
     y: 0,
+    scale: 1,
     filter: 'blur(0px)',
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
   },
 }
 
@@ -21,8 +22,8 @@ export default function VideoSection() {
       variants={revealVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: '-15%' }}
-      className="mt-10 w-full"
+      viewport={{ once: true, amount: 0.2, margin: '0px 0px -10% 0px' }}
+      className="mt-10 w-full will-change-transform-opacity"
     >
       <div className="group relative">
         <div className="pointer-events-none absolute -inset-[1px] rounded-[22px] bg-gradient-to-br from-brand-blue/60 via-brand-cyan/40 to-brand-purple/60 opacity-60 blur-[2px] transition-opacity duration-500 group-hover:opacity-100" />

@@ -81,7 +81,13 @@ export default function HorizontalProofStrip() {
 
   return (
     <section className="mt-16 sm:mt-20">
-      <div className="mx-auto max-w-3xl text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-3xl text-center"
+      >
         <span className="chip mx-auto">
           <TrendingUp size={12} className="text-emerald-500" />
           <span>Real results, real students</span>
@@ -94,9 +100,15 @@ export default function HorizontalProofStrip() {
           Our students are applying these strategies and generating real
           results. Swipe through verified earning screenshots below.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="relative mt-10">
+      <motion.div
+        initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mt-10"
+      >
         <button
           type="button"
           onClick={() => scrollBy(-1)}
@@ -125,9 +137,17 @@ export default function HorizontalProofStrip() {
               type="button"
               key={proof.id}
               onClick={() => setActiveIndex(index)}
-              whileHover={reduce ? undefined : { y: -3 }}
+              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{
+                delay: Math.min(index, 8) * 0.06,
+                duration: 0.6,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              whileHover={reduce ? undefined : { y: -4, scale: 1.01 }}
               whileTap={reduce ? undefined : { scale: 0.98 }}
-              className="group relative shrink-0 snap-start overflow-hidden rounded-[22px] bg-slate-900/5 outline-none ring-1 ring-black/5 transition-shadow focus-visible:ring-2 focus-visible:ring-cyan-400/60 dark:bg-slate-900/40 dark:ring-white/10"
+              className="group relative shrink-0 snap-start overflow-hidden rounded-[22px] bg-slate-900/5 outline-none ring-1 ring-black/5 transition-shadow hover:shadow-[0_24px_60px_-24px_rgba(15,23,42,0.4)] focus-visible:ring-2 focus-visible:ring-cyan-400/60 dark:bg-slate-900/40 dark:ring-white/10"
               style={{ width: 'clamp(220px, 68vw, 300px)' }}
               aria-label={`Open ${proof.label}`}
             >
@@ -145,7 +165,7 @@ export default function HorizontalProofStrip() {
             </motion.button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {active && (

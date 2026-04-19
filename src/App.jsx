@@ -21,9 +21,19 @@ function AnimatedRoutes() {
   const variants = reduce
     ? { initial: {}, animate: {}, exit: {} }
     : {
-        initial: { opacity: 0, y: -60 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -30 },
+        initial: { opacity: 0, y: -72, filter: 'blur(12px)' },
+        animate: {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
+        },
+        exit: {
+          opacity: 0,
+          y: -32,
+          filter: 'blur(6px)',
+          transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+        },
       }
 
   return (
@@ -34,7 +44,7 @@ function AnimatedRoutes() {
         animate="animate"
         exit="exit"
         variants={variants}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{ willChange: 'transform, opacity, filter' }}
       >
         <Routes location={location}>
           <Route path="/" element={<LandingPage />} />

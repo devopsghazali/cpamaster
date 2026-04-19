@@ -12,7 +12,6 @@ import ThemeToggle from '../components/ThemeToggle'
 import Footer from '../components/Footer'
 import { GOOGLE_DRIVE_LINK, isPlaceholderMode, supportPhoneDisplay } from '../lib/config'
 import { primaryCourse } from '../data/courses'
-import { featuredVideo } from '../data/video'
 
 const storageKey = 'cpamaster-last-purchase'
 
@@ -46,7 +45,6 @@ export default function PaymentSuccessPage() {
   const supportPhone = purchase?.supportPhone || supportPhoneDisplay
   const courseName = purchase?.courseName || primaryCourse.name
   const placeholder = !purchase || purchase.status === 'placeholder' || isPlaceholderMode()
-  const videoId = featuredVideo.id
 
   return (
     <>
@@ -56,9 +54,9 @@ export default function PaymentSuccessPage() {
       <main className="relative mx-auto flex min-h-screen w-full max-w-2xl items-center px-5 py-14 sm:px-8">
         <div className="w-full">
           <motion.section
-            initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+            initial={{ opacity: 0, y: 32, filter: 'blur(12px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
             className="glass-panel relative overflow-hidden rounded-[30px] p-6 sm:p-8"
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent" />
@@ -70,13 +68,27 @@ export default function PaymentSuccessPage() {
               </Link>
             </div>
 
-            <div className="mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 text-slate-950 shadow-[0_24px_60px_-24px_rgba(16,185,129,0.65)]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{
+                delay: 0.2,
+                duration: 0.75,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 text-slate-950 shadow-[0_24px_60px_-24px_rgba(16,185,129,0.65)]"
+            >
               <BadgeCheck size={28} />
-            </div>
+            </motion.div>
 
-            <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-5 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl"
+            >
               Payment successful. Your access is ready.
-            </h1>
+            </motion.h1>
 
             {placeholder && (
               <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[12px] leading-5 text-amber-700 dark:text-amber-200">
@@ -84,39 +96,26 @@ export default function PaymentSuccessPage() {
               </div>
             )}
 
-            <div className="mt-6 overflow-hidden rounded-2xl bg-slate-950 ring-1 ring-black/5 dark:ring-white/10">
-              <div className="relative aspect-video w-full">
-                {videoId ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}?start=0&end=30&autoplay=0&rel=0`}
-                    title="Access ready"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 h-full w-full"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-white/80">
-                    <div className="text-center">
-                      <PlayCircle size={40} className="mx-auto text-emerald-400" />
-                      <p className="mt-2 text-sm">Welcome clip coming soon</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <a
+            <motion.a
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               href={driveLink}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
             >
               <PlayCircle size={18} />
               Open Google Drive access
               <ExternalLink size={14} />
-            </a>
+            </motion.a>
 
-            <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-5 grid gap-3 text-sm sm:grid-cols-2"
+            >
               <div className="rounded-xl bg-white/50 p-4 dark:bg-white/5">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Course
@@ -134,7 +133,7 @@ export default function PaymentSuccessPage() {
                   {supportPhone}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             <p className="mt-5 text-[12.5px] leading-6 text-slate-600 dark:text-slate-400">
               Drive folder open karo, material complete karo, phir support number par contact karo for mentorship next steps.

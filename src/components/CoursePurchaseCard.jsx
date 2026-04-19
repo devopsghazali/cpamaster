@@ -10,16 +10,16 @@ export default function CoursePurchaseCard({ course, index }) {
   return (
     <>
       <motion.article
-        initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
-        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        initial={{ opacity: 0, y: 44, scale: 0.97, filter: 'blur(12px)' }}
+        whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{
-          delay: 0.05 + index * 0.05,
-          duration: 0.6,
+          delay: 0.05 + index * 0.06,
+          duration: 0.9,
           ease: [0.22, 1, 0.36, 1],
         }}
-        whileHover={reduce ? undefined : { y: -4 }}
-        className="group glass-panel relative overflow-hidden rounded-[30px] p-6 sm:p-8"
+        whileHover={reduce ? undefined : { y: -5, scale: 1.005 }}
+        className="group glass-panel relative overflow-hidden rounded-[30px] p-6 will-change-transform-opacity transition-shadow hover:shadow-[0_40px_100px_-30px_rgba(37,99,235,0.45)] sm:p-8"
       >
         <div
           className="pointer-events-none absolute inset-0 opacity-75 transition-opacity duration-500 group-hover:opacity-100"
@@ -59,11 +59,22 @@ export default function CoursePurchaseCard({ course, index }) {
         )}
 
         <ul className="relative mt-5 grid gap-2.5 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-2">
-          {course.learningPoints.map((point) => (
-            <li key={point} className="flex gap-2">
+          {course.learningPoints.map((point, idx) => (
+            <motion.li
+              key={point}
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{
+                delay: 0.25 + idx * 0.04,
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="flex gap-2"
+            >
               <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-500" />
               <span>{point}</span>
-            </li>
+            </motion.li>
           ))}
         </ul>
 

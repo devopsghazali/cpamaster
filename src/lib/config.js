@@ -15,6 +15,6 @@ export const GOOGLE_DRIVE_LINK =
   'https://drive.google.com/drive/folders/1FYD-fUr22h8gsHdiWbLPLLZNQMxvlx-9'
 
 export const PAYMENT_MODE =
-  (import.meta.env.VITE_PAYMENT_MODE || 'placeholder').toLowerCase()
+  (import.meta.env.VITE_PAYMENT_MODE || 'live').toLowerCase()
 
 export const isPlaceholderMode = () => PAYMENT_MODE !== 'live'

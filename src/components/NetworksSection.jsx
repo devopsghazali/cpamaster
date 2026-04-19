@@ -5,7 +5,13 @@ import { networks } from '../data/networks'
 export default function NetworksSection() {
   return (
     <section className="mt-16 sm:mt-20">
-      <div className="mx-auto max-w-3xl text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-3xl text-center will-change-transform-opacity"
+      >
         <span className="chip mx-auto">
           <Network size={12} className="text-violet-500" />
           <span>CPA networks we work with</span>
@@ -19,21 +25,22 @@ export default function NetworksSection() {
           across the networks that actually pay — and how to scale once one
           starts converting.
         </p>
-      </div>
+      </motion.div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {networks.map((network, index) => (
           <motion.article
             key={network.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
+            initial={{ opacity: 0, y: 32, scale: 0.96, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            viewport={{ once: true, amount: 0.25 }}
             transition={{
-              delay: 0.08 * index,
-              duration: 0.55,
+              delay: 0.09 * index,
+              duration: 0.7,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="glass-panel group relative overflow-hidden rounded-[26px] p-5"
+            whileHover={{ y: -4, scale: 1.01 }}
+            className="glass-panel group relative overflow-hidden rounded-[26px] p-5 transition-shadow hover:shadow-[0_30px_80px_-30px_rgba(15,23,42,0.35)]"
           >
             <div
               className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${network.accent} opacity-80`}

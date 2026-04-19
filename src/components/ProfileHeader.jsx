@@ -1,20 +1,29 @@
 import { motion } from 'motion/react'
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 14, filter: 'blur(6px)' },
+  hidden: { opacity: 0, y: 22, filter: 'blur(8px)', scale: 0.96 },
   show: {
     opacity: 1,
     y: 0,
     filter: 'blur(0px)',
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    scale: 1,
+    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
   },
 }
 
 export default function ProfileHeader() {
   return (
     <section className="relative flex flex-col items-start text-left">
-      <motion.div variants={itemVariants} className="relative mb-6">
-        <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-brand-blue/35 via-brand-cyan/20 to-brand-purple/30 blur-2xl" />
+      <motion.div
+        variants={itemVariants}
+        className="relative mb-6 will-change-transform-opacity"
+      >
+        <motion.div
+          aria-hidden
+          className="absolute -inset-4 rounded-full bg-gradient-to-br from-brand-blue/35 via-brand-cyan/20 to-brand-purple/30 blur-2xl"
+          animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.06, 1] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        />
         <div className="glass-card glass-card-lift relative flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-[22px] ring-1 ring-black/5 dark:ring-white/10 sm:h-24 sm:w-24">
           <img
             src="/logo.svg"
