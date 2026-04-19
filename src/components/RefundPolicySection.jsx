@@ -1,26 +1,27 @@
 import { motion } from 'motion/react'
-import { FileText, ShieldAlert } from 'lucide-react'
+import { FileText, Mail, ShieldAlert } from 'lucide-react'
+
+const SUPPORT_EMAIL = 'kaif85725@gmail.com'
 
 const clauses = [
   {
-    title: 'No Refund (basic rule)',
+    title: 'No Refund (Basic Rule)',
     body:
-      'Jab koi banda course ya product khareed lega to usko paisa wapas nahi milega. Content digital hai (Drive link / course) aur payment ke baad instantly access mil jata hai.',
+      'Once a customer purchases the course or digital product, no refund will be provided. Since the content is digital (Google Drive access / course material) and access is provided instantly after successful payment, refunds are not applicable under normal circumstances.',
   },
   {
-    title: 'Kab refund mil sakta hai (rare cases)',
+    title: 'Refund Allowed Only in Rare Cases',
     body:
-      'Sirf 3 situations me: (1) 2 baar payment ho gaya ho (duplicate), (2) paisa cut ho gaya lekin access nahi mila, (3) payment ho gaya lekin order system me save nahi hua. In cases me support ko 24\u201348 hours ke andar contact karna hoga.',
+      'Refund may only be considered in these 3 situations: (1) Duplicate payment (customer paid twice), (2) Payment was successful but course access was not provided, (3) Payment was successful but the order was not properly recorded in the system. In such cases, the customer must contact support within 24–48 hours of payment for resolution.',
   },
   {
     title: 'Support',
-    body:
-      'Agar koi problem ho (payment issue ya access issue), to support se contact karo \u2014 Email: kaif85725@gmail.com ya YouTube channel: https://www.youtube.com/@themkbhai par message karo.',
+    body: 'For payment issues or access-related problems, contact support only via email. No other support method should be used for refund requests.',
   },
   {
-    title: 'Policy change',
+    title: 'Policy Changes',
     body:
-      'Future me rules change ho sakte hain. Bina notice ke bhi update ho sakta hai.',
+      'This policy may be updated in the future if required. CPA MASTER reserves the right to modify these terms without prior notice.',
   },
 ]
 
@@ -31,7 +32,7 @@ export default function RefundPolicySection() {
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto max-w-3xl text-center"
       >
         <span className="chip mx-auto">
@@ -48,10 +49,10 @@ export default function RefundPolicySection() {
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         className="relative mx-auto mt-10 max-w-3xl"
       >
-        <div className="absolute -inset-2 rounded-[32px] bg-gradient-to-br from-amber-200/40 via-rose-200/30 to-amber-200/40 blur-2xl dark:from-amber-400/10 dark:via-rose-400/10 dark:to-amber-400/10" />
+        <div className="absolute -inset-2 rounded-[32px] bg-gradient-to-br from-amber-200/30 via-rose-200/20 to-amber-200/30 blur-2xl dark:from-amber-400/10 dark:via-rose-400/10 dark:to-amber-400/10" />
 
         <div
           className="relative overflow-hidden rounded-[28px] bg-[#fdfaf3] p-7 shadow-[0_40px_100px_-30px_rgba(120,80,20,0.35)] ring-1 ring-amber-900/10 dark:bg-[#1a1812] dark:ring-amber-100/10 sm:p-10"
@@ -61,7 +62,6 @@ export default function RefundPolicySection() {
           }}
         >
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400/0 via-amber-500/70 to-amber-400/0" />
-          <div className="absolute left-12 top-0 h-full w-px bg-rose-400/40" />
 
           <div className="relative flex items-start gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-amber-300 dark:bg-amber-300 dark:text-slate-950">
@@ -72,7 +72,7 @@ export default function RefundPolicySection() {
                 Official Document
               </div>
               <h3 className="mt-1 font-display text-2xl font-bold tracking-tight text-slate-950 dark:text-amber-50 sm:text-[28px]">
-                CPAMASTER — Refund & Cancellation Policy
+                CPA MASTER — Refund & Cancellation Policy
               </h3>
               <div className="mt-1 text-[12px] text-slate-500 dark:text-amber-100/60">
                 Effective from the date of purchase. Governed by Indian law.
@@ -88,8 +88,8 @@ export default function RefundPolicySection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{
-                  delay: 0.06 * index,
-                  duration: 0.55,
+                  delay: 0.05 * index,
+                  duration: 0.5,
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 className="flex gap-4"
@@ -104,21 +104,52 @@ export default function RefundPolicySection() {
                   <p className="mt-1 text-[14px] leading-7 text-slate-700 dark:text-amber-50/85">
                     {clause.body}
                   </p>
+                  {clause.title === 'Support' && (
+                    <a
+                      href={`mailto:${SUPPORT_EMAIL}`}
+                      className="mt-2 inline-flex items-center gap-2 rounded-full bg-slate-950 px-3.5 py-1.5 text-[12.5px] font-semibold text-amber-100 transition-transform duration-300 hover:-translate-y-0.5 dark:bg-amber-300 dark:text-slate-950"
+                    >
+                      <Mail size={13} />
+                      {SUPPORT_EMAIL}
+                    </a>
+                  )}
                 </div>
               </motion.li>
             ))}
           </ol>
 
-          <div className="relative mt-8 flex flex-wrap items-end justify-between gap-3 border-t border-amber-800/20 pt-5 text-[12px] text-slate-600 dark:border-amber-200/15 dark:text-amber-100/70">
+          <div className="relative mt-10 flex flex-wrap items-end justify-between gap-6 border-t border-amber-800/20 pt-6 text-[12px] text-slate-600 dark:border-amber-200/15 dark:text-amber-100/70">
             <div>
-              <div className="font-semibold text-slate-900 dark:text-amber-50">
-                CPAMASTER
+              <div className="font-display text-base font-bold text-slate-900 dark:text-amber-50">
+                CPA MASTER
               </div>
-              <div>kaif85725@gmail.com</div>
-              <div>youtube.com/@themkbhai</div>
+              <div className="mt-1 flex items-center gap-1.5">
+                <Mail size={11} />
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="hover:underline"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+              </div>
             </div>
-            <div className="font-display italic text-slate-900 dark:text-amber-100">
-              — Authorised Signatory
+
+            <div className="flex flex-col items-end text-right">
+              <span
+                className="text-[38px] leading-none text-slate-900 dark:text-amber-100 sm:text-[44px]"
+                style={{
+                  fontFamily:
+                    '"Dancing Script","Brush Script MT","Segoe Script","Lucida Handwriting",cursive',
+                  letterSpacing: '0.5px',
+                  transform: 'rotate(-4deg)',
+                  display: 'inline-block',
+                }}
+              >
+                MkBhai
+              </span>
+              <span className="mt-1 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-amber-100/60">
+                Authorised Signatory
+              </span>
             </div>
           </div>
         </div>

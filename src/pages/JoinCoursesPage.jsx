@@ -7,6 +7,7 @@ import CoursePurchaseCard from '../components/CoursePurchaseCard'
 import WhyChooseSection from '../components/WhyChooseSection'
 import NetworksSection from '../components/NetworksSection'
 import HorizontalProofStrip from '../components/HorizontalProofStrip'
+import EarningsTrustCard from '../components/EarningsTrustCard'
 import RefundPolicySection from '../components/RefundPolicySection'
 import FaqSection from '../components/FaqSection'
 import CommunityCta from '../components/CommunityCta'
@@ -44,6 +45,7 @@ export default function JoinCoursesPage() {
         </section>
 
         <HorizontalProofStrip />
+        <EarningsTrustCard />
         <WhyChooseSection />
         <NetworksSection />
         <RefundPolicySection />

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
-import { BadgeCheck, ShoppingBag } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { BadgeCheck } from 'lucide-react'
 import { fetchRecentBuyers } from '../lib/payment'
 
-const rotateMs = 4200
+const rotateMs = 5200
 
 export default function RecentBuyersPopup() {
   const [buyers, setBuyers] = useState([])
   const [index, setIndex] = useState(0)
+  const reduce = useReducedMotion()
 
   useEffect(() => {
     let mounted = true
-
     const load = async () => {
       try {
         const data = await fetchRecentBuyers()
@@ -19,15 +19,11 @@ export default function RecentBuyersPopup() {
           setBuyers(data)
         }
       } catch {
-        if (mounted) {
-          setBuyers([])
-        }
+        if (mounted) setBuyers([])
       }
     }
-
     load()
-    const refresh = window.setInterval(load, 45000)
-
+    const refresh = window.setInterval(load, 60000)
     return () => {
       mounted = false
       window.clearInterval(refresh)
@@ -47,31 +43,27 @@ export default function RecentBuyersPopup() {
   const buyer = buyers[index]
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 z-30 hidden sm:block">
+    <div className="pointer-events-none fixed inset-x-0 top-3 z-40 flex justify-center px-3 sm:top-5">
       <AnimatePresence mode="wait">
         <motion.div
-          key={`${buyer.name}-${buyer.course}`}
-          initial={{ opacity: 0, y: 16, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 12, scale: 0.96 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="glass-panel pointer-events-auto flex max-w-[320px] items-start gap-3 rounded-[22px] px-4 py-3"
+          key={`${buyer.name}-${buyer.course}-${index}`}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-auto flex max-w-[92vw] items-center gap-2.5 rounded-full border border-emerald-500/20 bg-white/90 px-3.5 py-2 shadow-[0_12px_32px_-16px_rgba(15,23,42,0.35)] backdrop-blur-md dark:border-emerald-400/20 dark:bg-slate-950/80 sm:max-w-md sm:px-4"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-            <ShoppingBag size={18} />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">
-              <BadgeCheck size={12} />
-              Recent verified buyer
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300">
+            <BadgeCheck size={13} />
+          </span>
+          <div className="min-w-0 text-left">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">
+              Recent Verified Buyer
             </div>
-            <p className="mt-1 text-sm leading-5 text-slate-700 dark:text-slate-300">
+            <p className="truncate text-[12.5px] leading-5 text-slate-700 dark:text-slate-200 sm:text-[13px]">
               <span className="font-semibold text-slate-950 dark:text-white">{buyer.name}</span>{' '}
               from {buyer.city} joined{' '}
-              <span className="font-semibold text-slate-950 dark:text-white">{buyer.course}</span>.
-            </p>
-            <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">
-              {buyer.relativeTime}
+              <span className="font-semibold text-slate-950 dark:text-white">{buyer.course}</span>
             </p>
           </div>
         </motion.div>

@@ -124,8 +124,13 @@ export default function ApplyNowModal({ course, open, onClose }) {
             customer,
             ...paymentResponse,
           })
+          const stamped = {
+            ...verified.purchase,
+            status: 'verified',
+            createdAt: new Date().toISOString(),
+          }
           setCompleted(true)
-          persistAndNavigate(verified.purchase, navigate)
+          persistAndNavigate(stamped, navigate)
         },
         onDismiss: () => setBusy(false),
       })
