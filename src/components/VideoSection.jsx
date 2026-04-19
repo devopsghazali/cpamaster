@@ -14,7 +14,7 @@ const revealVariants = {
 
 export default function VideoSection() {
   const reduce = useReducedMotion()
-  const { id, title, duration, views, tag } = featuredVideo
+  const { id, title, duration, views } = featuredVideo
 
   return (
     <motion.section
@@ -24,19 +24,6 @@ export default function VideoSection() {
       viewport={{ once: true, margin: '-15%' }}
       className="mt-10 w-full"
     >
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="h-px w-6 bg-gradient-to-r from-transparent via-slate-400 to-slate-400 dark:via-slate-600 dark:to-slate-600" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-            {tag}
-          </span>
-        </div>
-        <span className="chip">
-          <span className="h-1.5 w-1.5 rounded-full bg-rose-500 motion-safe:animate-pulse" />
-          <span>Proof</span>
-        </span>
-      </div>
-
       <div className="group relative">
         <div className="pointer-events-none absolute -inset-[1px] rounded-[22px] bg-gradient-to-br from-brand-blue/60 via-brand-cyan/40 to-brand-purple/60 opacity-60 blur-[2px] transition-opacity duration-500 group-hover:opacity-100" />
 
@@ -94,9 +81,6 @@ export default function VideoSection() {
 
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
                   <div className="min-w-0">
-                    <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60">
-                      Featured proof
-                    </div>
                     <div className="mt-1 line-clamp-2 text-sm font-semibold text-white sm:text-[15px]">
                       {title}
                     </div>

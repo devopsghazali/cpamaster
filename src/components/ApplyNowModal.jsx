@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { LockKeyhole, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import {
   createOrder,
   simulatePlaceholderPurchase,
@@ -142,7 +142,7 @@ export default function ApplyNowModal({ course, open, onClose }) {
         ? 'Preparing preview access...'
         : 'Starting secure checkout...'
     }
-    return `Pay ${course.priceLabel} & Get Access`
+    return `Join Now – ${course.priceLabel}`
   })()
 
   return (
@@ -176,17 +176,9 @@ export default function ApplyNowModal({ course, open, onClose }) {
             </button>
 
             <div className="px-6 pb-2 pt-7 sm:px-8">
-              <span className="chip">
-                <Sparkles size={12} className="text-amber-500" />
-                <span>Enrollment form</span>
-              </span>
-              <h3 className="mt-3 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-[26px]">
-                Apply for {course.name}
+              <h3 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-[26px]">
+                {course.name}
               </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                Fill in your details. After payment verification you get
-                instant Google Drive access and mentorship support.
-              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 sm:px-8 sm:pb-8">
@@ -230,23 +222,6 @@ export default function ApplyNowModal({ course, open, onClose }) {
                   className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition-shadow focus:shadow-[0_0_0_4px_rgba(59,130,246,0.14)] disabled:opacity-60 dark:border-white/10 dark:bg-slate-900/70 dark:text-white"
                 />
               </label>
-
-              <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                <span className="chip">
-                  <LockKeyhole size={12} className="text-emerald-500" />
-                  <span>Server-side order</span>
-                </span>
-                <span className="chip">
-                  <ShieldCheck size={12} className="text-cyan-500" />
-                  <span>Signature verified</span>
-                </span>
-                {isPlaceholderMode() && (
-                  <span className="chip">
-                    <Sparkles size={12} className="text-amber-500" />
-                    <span>Preview mode</span>
-                  </span>
-                )}
-              </div>
 
               {error && (
                 <p className="mt-3 text-sm text-rose-500" role="alert">

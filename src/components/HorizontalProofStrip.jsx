@@ -3,6 +3,29 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ChevronLeft, ChevronRight, TrendingUp, X } from 'lucide-react'
 import { proofs } from '../data/proofs'
 
+function ProofImage({ src, alt, priority }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        decoding="async"
+        draggable={false}
+        onLoad={() => setLoaded(true)}
+        className={`h-full w-full object-cover object-top transition-all duration-500 group-hover:scale-[1.04] ${
+          loaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'
+        }`}
+      />
+    </div>
+  )
+}
+
 export default function HorizontalProofStrip() {
   const reduce = useReducedMotion()
   const scrollerRef = useRef(null)
@@ -109,13 +132,10 @@ export default function HorizontalProofStrip() {
               aria-label={`Open ${proof.label}`}
             >
               <div className="aspect-[9/16] w-full">
-                <img
+                <ProofImage
                   src={proof.src}
                   alt={proof.label}
-                  loading={index < 3 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  draggable={false}
-                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                  priority={index < 6}
                 />
               </div>
               <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">

@@ -4,20 +4,29 @@
       <stop offset="0" stop-color="#0B1220" />
       <stop offset="1" stop-color="#03060D" />
     </linearGradient>
-    <linearGradient id="cm-accent" x1="16" y1="78" x2="82" y2="18" gradientUnits="userSpaceOnUse">
+    <linearGradient id="cm-accent" x1="16" y1="80" x2="80" y2="16" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00C6FF" />
       <stop offset="1" stop-color="#00FF9F" />
     </linearGradient>
-    <radialGradient id="cm-halo" cx="50%" cy="50%" r="55%">
-      <stop offset="0" stop-color="#00C6FF" stop-opacity="0.22" />
+    <radialGradient id="cm-halo" cx="50%" cy="50%" r="60%">
+      <stop offset="0" stop-color="#00C6FF" stop-opacity="0.28" />
       <stop offset="1" stop-color="#00C6FF" stop-opacity="0" />
     </radialGradient>
   </defs>
+
   <rect width="96" height="96" rx="24" fill="url(#cm-bg)" />
-  <circle cx="48" cy="48" r="40" fill="url(#cm-halo)" />
+  <circle cx="48" cy="48" r="42" fill="url(#cm-halo)" />
   <rect x="1" y="1" width="94" height="94" rx="23" stroke="white" stroke-opacity="0.08" />
-  <g stroke="url(#cm-accent)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
-    <path d="M62 30 A 20 20 0 1 0 62 66" />
-    <path d="M40 68 L 40 30 L 54 42 L 68 30 L 68 68" />
+
+  <g fill="url(#cm-accent)">
+    <rect x="22" y="58" width="8" height="18" rx="2" />
+    <rect x="34" y="48" width="8" height="28" rx="2" />
+    <rect x="46" y="38" width="8" height="38" rx="2" />
+    <rect x="58" y="28" width="8" height="48" rx="2" />
+  </g>
+
+  <g stroke="url(#cm-accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M20 32 L 38 20 L 56 26 L 74 14" />
+    <path d="M68 14 L 74 14 L 74 20" />
   </g>
 </svg>

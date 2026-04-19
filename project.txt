@@ -812,6 +812,200 @@ REPO PRIVACY (user ko decide karna hai):
   rakhna bhi safe hai. Sirf code dikhta hai, secrets Supabase
   me.
 
+----------------------------------------------------------------
+12. FULL POLISH PASS — LOGO, TEXT TRIM, FREE GUIDE, REFUND POLICY,
+    PAGE TRANSITIONS, VERCEL, PAYMENT SUCCESS REDESIGN
+----------------------------------------------------------------
+
+Date: 2026-04-19
+
+USER BRIEF (bahut lamba tha, summary):
+  1. Logo unclear tha — CM monogram me C aur M aapas me chipak gaye
+     the, samjh me nahi aa raha tha kya hai.
+  2. Main UI (home) se hatao:
+       - Video ke upar "Latest drop" (chota caption)
+       - Video ke upar "Proof" chip
+       - "CPA Marketing, Funnels, and Performance Systems" subtitle
+       - "cpamaster is a modern CPA affiliate platform..." (poori
+         3-line description)
+       - "Live support funnel" chip (profile header top par)
+  3. JoinCoursesPage se hatao:
+       - "Learn CPA Marketing. Start Earning Online." wala hero
+         heading — zyada text nahi chahiye.
+  4. ApplyNow modal se hatao:
+       - "Apply for CPA MASTERY" heading
+       - "Fill in your details. After payment verification..."
+       - Trust chips (Server-side order / Signature verified /
+         Preview mode)
+       - Button text "Apply Now" -> "Join Now" (course card +
+         modal button both).
+  5. HorizontalProofStrip ki images load slow hoti thi — fix.
+  6. Refund Policy section add karo JoinCoursesPage par — UI
+     aisa ho jaise proper kagaz par likha ho (official document
+     feel).
+  7. Free Guide: abhi tak "#" placeholder tha, ab ek proper full
+     detail wala Roman Hindi CPA guide banao. guide.txt exist nahi
+     tha — joincourses.txt + domain knowledge se likha.
+  8. Page transitions: jab Join Courses button click kare, upar
+     se aaye (slide from top), beech se ya half UI se nahi.
+  9. Scroll animations across pages.
+  10. PaymentSuccessPage: short + clean rakho. Drive link +
+      support number + short instruction + ek half-video
+      ("Payment successful your access is ready").
+  11. Deployment: project Vercel par daal diya (npx vercel).
+
+KYA BANAYA / CHANGED:
+
+  a) public/logo.svg + public/favicon.svg (COMPLETE REDESIGN)
+     - Pehle: CM monogram — C arc + M letters overlap (unclear).
+     - Ab: 4 ascending bar chart + upward arrow trend line
+       (cyan #00C6FF -> green #00FF9F gradient).
+     - Growth/marketing brand ke liye instantly recognizable.
+     - Same SVG structure maintained (24px border-radius square
+       dark-bg + halo + stroke accent).
+
+  b) src/components/ProfileHeader.jsx
+     - "Live support funnel" chip removed.
+     - Subtitle (Sparkles + "CPA Marketing, Funnels, and
+       Performance Systems") removed.
+     - Full description paragraph removed.
+     - Sirf logo + brand name (cpa + gradient master) rakha.
+     - motion.div entry animation retain (logo + h1 stagger).
+
+  c) src/components/VideoSection.jsx
+     - Top strip removed: "Latest drop" caption + "Proof" pulse chip.
+     - "Featured proof" label inside video overlay removed.
+     - featuredVideo.tag destructure hata diya (abhi use nahi).
+
+  d) src/pages/JoinCoursesPage.jsx
+     - "Learn CPA Marketing. Start Earning Online." hero heading
+       poora remove.
+     - "One focused course. Built for real execution." chip
+       heading bhi remove (cleaner, zyada text nahi chahiye).
+     - Direct course card section top par start, phir sections.
+     - RefundPolicySection import + render (ProofStrip ke baad).
+
+  e) src/components/ApplyNowModal.jsx
+     - "Enrollment form" chip hata diya.
+     - "Apply for {course.name}" heading -> sirf "{course.name}"
+       (course name as heading, no "Apply for" prefix).
+     - Description paragraph removed.
+     - Trust chips block (LockKeyhole Server-side, ShieldCheck
+       Signature, Sparkles Preview) poora hata diya.
+     - Button label: "Pay {price} & Get Access" ->
+       "Join Now – {price}".
+     - Imports cleaned: LockKeyhole, ShieldCheck, Sparkles removed.
+
+  f) src/components/CoursePurchaseCard.jsx
+     - "Apply Now" button text -> "Join Now".
+
+  g) src/components/HorizontalProofStrip.jsx
+     - Naya inner ProofImage component:
+         * Skeleton overlay (animated pulse gradient) jab tak
+           image load nahi hoti.
+         * opacity + blur-sm transition on load (500ms smooth).
+         * fetchpriority="high" pehle 6 images ke liye (pehle 3
+           tha).
+         * lazy for rest.
+     - Result: blank spots gone, perceived load instant (gradient
+       skeleton fills space), sharp reveal on load.
+
+  h) src/components/RefundPolicySection.jsx (NEW)
+     - Paper-style kagaz-on-page UI:
+         * #fdfaf3 cream paper bg (dark: #1a1812) with faint
+           horizontal rule lines (repeating-linear-gradient).
+         * Red vertical margin line (left 12px) like notebook.
+         * Amber top stripe, amber halo shadow.
+     - 5 clauses: Digital Product Disclosure, Non-Refundable,
+       Eligible Exceptions, Mentorship Scope, Dispute Process.
+     - Content Roman Hindi me — compliance-grade, razorpay +
+       user-consent language.
+     - Authorised Signatory footer line (italic display font).
+
+  i) src/pages/FreeGuidePage.jsx (NEW)
+     - Route: /free-guide (App.jsx mein add).
+     - Roman Hindi detailed CPA starter blueprint.
+     - 8 chapters: Intro / Kyon Choose / Kaise Shuru / Traffic
+       Sources / USA Method / Earning Expectations / 5 Common
+       Mistakes / Next Step (CPA MASTERY CTA).
+     - Table of Contents top par (anchor nav).
+     - Har section motion whileInView fade+rise animation.
+     - Footer CTA: "Guide padh li. Ab course le ke start karo."
+       -> /join-courses link.
+
+  j) src/data/links.js
+     - Free Guide card: href "#" -> "/free-guide",
+       internal: true. LinkCard pehle se internal support karta
+       hai (navigate via React Router).
+
+  k) src/App.jsx (ROUTING OVERHAUL)
+     - ScrollToTop component: route change pe window.scrollTo(0,0).
+     - AnimatedRoutes: AnimatePresence mode="wait" wraps Routes.
+     - motion.div keyed on pathname:
+         initial: { opacity: 0, y: -60 }   (upar se aaye)
+         animate: { opacity: 1, y: 0 }
+         exit:    { opacity: 0, y: -30 }   (upar hi jaye)
+         transition: 0.5s cubic [0.22, 1, 0.36, 1]
+     - Reduced-motion respect (reduce ? empty variants : slide).
+     - New /free-guide route registered.
+
+  l) src/pages/PaymentSuccessPage.jsx (REDESIGN — SHORT)
+     - Max-width 2xl (672px) centered — pehle 5xl tha.
+     - Header row: back link only (status chip removed).
+     - Compact: BadgeCheck tile (56px) + h1 "Payment successful.
+       Your access is ready."
+     - Placeholder mode chota amber banner (1-line).
+     - HALF-VIDEO embed: YouTube iframe with start=0, end=30
+       query params — sirf first 30 sec play hota hai ("welcome
+       clip" feel). Video ID featuredVideo.id se (agar null to
+       PlayCircle fallback dikhta hai).
+     - Primary CTA: Drive link button (full width, dark).
+     - 2-column bottom grid: Course name | Support phone.
+     - Bottom 1-line instruction (Roman Hindi).
+     - Purchase details dl REMOVED — zyada text kam.
+     - Imports cleaned: ShieldCheck + unused Headset usage fix.
+
+  m) vercel.json (NEW)
+     - framework: "vite"
+     - outputDirectory: "dist"
+     - rewrites: /(.*) -> /index.html  (SPA fallback — HashRouter
+       me technically needed nahi, lekin agar later BrowserRouter
+       pe shift karein to ready hai).
+     - Cache headers:
+         /assets/* -> 1 year immutable (fingerprinted)
+         /proofs/* -> 7 days public (jpeg screenshots)
+
+BUILD VERIFICATION:
+  - npm run build pass:
+      dist/index.html           1.07 kB
+      dist/assets/index-*.css  75.29 kB   (11.77 kB gzip)
+      dist/assets/index-*.js  446.31 kB  (141.07 kB gzip)
+  - 2159 modules transformed.
+  - No errors. IDE lint warnings (canonical Tailwind classes +
+    `motion` flagged unused in JSX — known IDE config gap,
+    doesn't affect build or runtime).
+
+IMPORTANT — PLACEHOLDER MODE STILL ON:
+  - src/lib/config.js -> PAYMENT_MODE default 'placeholder'.
+  - VITE_PAYMENT_MODE=live karne par hi real Razorpay flow hoga.
+  - Edge functions (create_order / verify_payment /
+    razorpay_webhook) deploy karna still pending.
+
+DEPLOY NOTES:
+  - User ne project Vercel pe daal diya (npx vercel).
+  - vercel.json framework auto-detect karwata hai — Vercel UI
+    me kuch configure karne ki zarurat nahi.
+  - HashRouter (#/route) use ho raha hai, isliye deep links
+    (/join-courses, /free-guide, /success) bina server config ke
+    bhi kaam karte hain. Rewrites bas safety net hai.
+  - Custom domain cpamaster.online Vercel me add kar sakte ho:
+      Vercel project -> Settings -> Domains -> Add.
+      Hostinger DNS me 1 A record (76.76.21.21) + CNAME
+      (cname.vercel-dns.com) point karwao.
+      Vercel auto-SSL issue kar dega 2 min me.
+      GitHub Pages wala DNS (4 A records to 185.199.*) Hostinger
+      se remove karna hoga.
+
 ================================================================
   End of project.txt
 ================================================================

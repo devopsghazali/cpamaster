@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'motion/react'
 import { ArrowLeft, BadgeCheck } from 'lucide-react'
 import Background from '../components/Background'
 import ThemeToggle from '../components/ThemeToggle'
@@ -8,6 +7,7 @@ import CoursePurchaseCard from '../components/CoursePurchaseCard'
 import WhyChooseSection from '../components/WhyChooseSection'
 import NetworksSection from '../components/NetworksSection'
 import HorizontalProofStrip from '../components/HorizontalProofStrip'
+import RefundPolicySection from '../components/RefundPolicySection'
 import FaqSection from '../components/FaqSection'
 import CommunityCta from '../components/CommunityCta'
 import Footer from '../components/Footer'
@@ -35,31 +35,8 @@ export default function JoinCoursesPage() {
           </span>
         </div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-10 text-center sm:mt-14"
-        >
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-5xl lg:text-[56px]">
-            Learn CPA Marketing.{' '}
-            <span className="text-gradient-brand">Start Earning Online.</span>
-          </h1>
-        </motion.section>
-
-        <section id="courses" className="mt-14 scroll-mt-20 sm:mt-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="chip mx-auto">
-              <BadgeCheck size={12} className="text-emerald-500" />
-              <span>The program</span>
-            </span>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
-              One focused course.{' '}
-              <span className="text-gradient-brand">Built for real execution.</span>
-            </h2>
-          </div>
-
-          <div className="mx-auto mt-8 grid max-w-3xl gap-6">
+        <section id="courses" className="mt-12 scroll-mt-20 sm:mt-16">
+          <div className="mx-auto mt-2 grid max-w-3xl gap-6">
             {courses.map((course, index) => (
               <CoursePurchaseCard key={course.id} course={course} index={index} />
             ))}
@@ -69,6 +46,7 @@ export default function JoinCoursesPage() {
         <WhyChooseSection />
         <NetworksSection />
         <HorizontalProofStrip />
+        <RefundPolicySection />
         <FaqSection />
         <CommunityCta />
 

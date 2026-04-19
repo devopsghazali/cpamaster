@@ -74,7 +74,7 @@ export default function CoursePurchaseCard({ course, index }) {
           className="relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-semibold text-white shadow-[0_24px_50px_-24px_rgba(37,99,235,0.75)] transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto sm:min-w-[220px]"
           style={{ background: course.fill }}
         >
-          Apply Now
+          Join Now
         </motion.button>
       </motion.article>
 
