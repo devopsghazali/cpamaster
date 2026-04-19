@@ -4,13 +4,30 @@ import {
   ArrowLeft,
   BadgeCheck,
   ExternalLink,
-  Headset,
+  Mail,
   PlayCircle,
 } from 'lucide-react'
+
+function YoutubeGlyph({ size = 12 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z" />
+    </svg>
+  )
+}
 import Background from '../components/Background'
 import ThemeToggle from '../components/ThemeToggle'
 import Footer from '../components/Footer'
-import { GOOGLE_DRIVE_LINK, isPlaceholderMode, supportPhoneDisplay } from '../lib/config'
+import { GOOGLE_DRIVE_LINK, isPlaceholderMode } from '../lib/config'
+
+const SUPPORT_EMAIL = 'kaif85725@gmail.com'
+const SUPPORT_YOUTUBE = 'https://www.youtube.com/@themkbhai'
 import { primaryCourse } from '../data/courses'
 
 const storageKey = 'cpamaster-last-purchase'
@@ -42,7 +59,6 @@ export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams()
   const purchase = readPurchase(searchParams)
   const driveLink = purchase?.driveLink || GOOGLE_DRIVE_LINK
-  const supportPhone = purchase?.supportPhone || supportPhoneDisplay
   const courseName = purchase?.courseName || primaryCourse.name
   const placeholder = !purchase || purchase.status === 'placeholder' || isPlaceholderMode()
 
@@ -126,17 +142,29 @@ export default function PaymentSuccessPage() {
               </div>
               <div className="rounded-xl bg-white/50 p-4 dark:bg-white/5">
                 <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-                  <Headset size={12} className="text-cyan-500" />
+                  <Mail size={12} className="text-cyan-500" />
                   Support
                 </div>
-                <p className="mt-1 font-semibold text-slate-900 dark:text-white">
-                  {supportPhone}
-                </p>
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="mt-1 block truncate font-semibold text-slate-900 hover:underline dark:text-white"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+                <a
+                  href={SUPPORT_YOUTUBE}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1 inline-flex items-center gap-1 text-[12px] text-slate-600 hover:text-rose-500 dark:text-slate-400"
+                >
+                  <YoutubeGlyph size={12} />
+                  <span>@themkbhai</span>
+                </a>
               </div>
             </motion.div>
 
             <p className="mt-5 text-[12.5px] leading-6 text-slate-600 dark:text-slate-400">
-              Drive folder open karo, material complete karo, phir support number par contact karo for mentorship next steps.
+              Drive folder open karo, material complete karo, phir support par email ya YouTube channel se contact karo for mentorship next steps.
             </p>
           </motion.section>
 

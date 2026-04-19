@@ -3,29 +3,24 @@ import { FileText, ShieldAlert } from 'lucide-react'
 
 const clauses = [
   {
-    title: 'Digital Product Disclosure',
+    title: 'No Refund (basic rule)',
     body:
-      'CPA MASTERY ek digital course hai. Payment confirm hone ke turant baad Google Drive material ka access de diya jata hai. Ek baar access issue ho jane ke baad order fulfilled maana jata hai.',
+      'Jab koi banda course ya product khareed lega to usko paisa wapas nahi milega. Content digital hai (Drive link / course) aur payment ke baad instantly access mil jata hai.',
   },
   {
-    title: 'Non-Refundable Clause',
+    title: 'Kab refund mil sakta hai (rare cases)',
     body:
-      'Digital nature ki wajah se, payment successful aur drive access delivered hone ke baad koi refund issue nahi hoga. Yeh policy industry standard hai aur checkout ke time user consent ke saath accept hoti hai.',
+      'Sirf 3 situations me: (1) 2 baar payment ho gaya ho (duplicate), (2) paisa cut ho gaya lekin access nahi mila, (3) payment ho gaya lekin order system me save nahi hua. In cases me support ko 24\u201348 hours ke andar contact karna hoga.',
   },
   {
-    title: 'Eligible Exceptions',
+    title: 'Support',
     body:
-      'Agar technical issue ki wajah se drive access 24 ghante tak bhi deliver nahi hota, to support team (support@cpamaster.online ya WhatsApp) par likhiye. Verify karne ke baad full refund 5-7 working days me original method me process hoga.',
+      'Agar koi problem ho (payment issue ya access issue), to support se contact karo \u2014 Email: kaif85725@gmail.com ya YouTube channel: https://www.youtube.com/@themkbhai par message karo.',
   },
   {
-    title: 'Mentorship Scope',
+    title: 'Policy change',
     body:
-      '3 months ka mentorship window purchase ke date se count hota hai. Kisi bhi reason se missed mentorship time extend nahi hoga — please window ke andar hi queries bhejiye.',
-  },
-  {
-    title: 'Dispute Process',
-    body:
-      'Kisi bhi dispute ke liye pehle support team se contact kariye. Agar resolution nahi hota, to Razorpay ki standard dispute timeline (7-10 days) follow hogi. Chargeback ke case me drive access revoke ho sakta hai.',
+      'Future me rules change ho sakte hain. Bina notice ke bhi update ho sakta hai.',
   },
 ]
 
@@ -119,7 +114,8 @@ export default function RefundPolicySection() {
               <div className="font-semibold text-slate-900 dark:text-amber-50">
                 CPAMASTER
               </div>
-              <div>support@cpamaster.online</div>
+              <div>kaif85725@gmail.com</div>
+              <div>youtube.com/@themkbhai</div>
             </div>
             <div className="font-display italic text-slate-900 dark:text-amber-100">
               — Authorised Signatory

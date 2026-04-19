@@ -5,7 +5,6 @@ import {
   SUPABASE_PUBLISHABLE_KEY,
   SUPABASE_URL,
   isPlaceholderMode,
-  supportPhoneDisplay,
 } from './config'
 import { getCourseById } from '../data/courses'
 
@@ -78,7 +77,6 @@ export function simulatePlaceholderPurchase({ courseId, customer }) {
     razorpayOrderId: mockOrderId,
     razorpayPaymentId: mockPaymentId,
     driveLink: GOOGLE_DRIVE_LINK,
-    supportPhone: supportPhoneDisplay,
     status: 'placeholder',
     mode: PAYMENT_MODE,
     createdAt: new Date(now).toISOString(),

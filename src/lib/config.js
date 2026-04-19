@@ -5,9 +5,6 @@ export const SUPABASE_PUBLISHABLE_KEY =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   'sb_publishable_mrF_DYjjMfEYP6aPK-IfUg_4bjYkGlV'
 
-export const supportPhoneDisplay =
-  import.meta.env.VITE_SUPPORT_PHONE || 'Add VITE_SUPPORT_PHONE'
-
 export const BRAND_NAME = import.meta.env.VITE_BRAND_NAME || 'CPAMaster'
 
 export const GOOGLE_DRIVE_LINK =
