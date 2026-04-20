@@ -16,12 +16,6 @@ const initialForm = { name: '', email: '', phone: '' }
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phonePattern = /^[+]?\d[\d\s-]{7,15}$/
 
-function encodePurchasePayload(value) {
-  const bytes = new TextEncoder().encode(JSON.stringify(value))
-  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('')
-  return window.btoa(binary)
-}
-
 function validate(form) {
   if (!form.name.trim() || form.name.trim().length < 2) {
     return 'Please enter your full name.'
@@ -37,8 +31,7 @@ function validate(form) {
 
 function persistAndNavigate(purchase, navigate) {
   localStorage.setItem('cpamaster-last-purchase', JSON.stringify(purchase))
-  const encoded = encodePurchasePayload(purchase)
-  navigate(`/success?data=${encodeURIComponent(encoded)}`)
+  navigate('/success')
 }
 
 export default function ApplyNowModal({ course, open, onClose }) {

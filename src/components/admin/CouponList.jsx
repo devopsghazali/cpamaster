@@ -79,8 +79,15 @@ export default function CouponList({
               className="grid grid-cols-1 gap-3 px-5 py-4 text-sm md:grid-cols-12 md:items-center"
             >
               <div className="md:col-span-3">
-                <div className="font-bold tracking-[0.1em] text-slate-950 dark:text-white">
-                  {coupon.code}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold tracking-[0.1em] text-slate-950 dark:text-white">
+                    {coupon.code}
+                  </span>
+                  {coupon.source && (
+                    <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-700 dark:text-cyan-300">
+                      {coupon.source}
+                    </span>
+                  )}
                 </div>
                 {coupon.notes && (
                   <div className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">

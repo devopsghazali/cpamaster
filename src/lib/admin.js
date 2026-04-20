@@ -37,7 +37,7 @@ export function clearAdminCredentials() {
   }
 }
 
-export async function adminRequest(action, payload = {}) {
+export async function adminRequest(action, payload = {}, { endpoint = 'admin_coupons' } = {}) {
   const token = getAdminToken()
   if (!token) {
     const error = new Error('Admin token missing. Please sign in again.')
@@ -45,7 +45,7 @@ export async function adminRequest(action, payload = {}) {
     throw error
   }
 
-  const response = await fetch(`${SUPABASE_URL}/functions/v1/admin_coupons`, {
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

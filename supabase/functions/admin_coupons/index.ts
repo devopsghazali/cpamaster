@@ -181,6 +181,7 @@ async function handleCreate(
   }
 
   const notes = payload?.notes ? `${payload.notes}`.slice(0, 500) : null
+  const source = payload?.source ? `${payload.source}`.trim().slice(0, 80) : null
 
   const { data: inserted, error } = await supabase
     .from('coupons')
@@ -193,6 +194,7 @@ async function handleCreate(
       expiry_date: expiryDate,
       status,
       notes,
+      source,
       created_by: actor,
     })
     .select('*')
@@ -289,6 +291,13 @@ async function handleUpdate(
 
   if (payload?.notes !== undefined) {
     updates.notes = payload.notes ? `${payload.notes}`.slice(0, 500) : null
+  }
+
+  if (payload?.source !== undefined) {
+    updates.source = payload.source
+      ? `${payload.source}`.trim().slice(0, 80)
+      : null
+    auditMeta.source = updates.source
   }
 
   if (Object.keys(updates).length === 0) {

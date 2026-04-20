@@ -9,6 +9,7 @@ const emptyForm = {
   minAmount: '',
   expiryDate: '',
   status: 'active',
+  source: '',
   notes: '',
 }
 
@@ -45,6 +46,7 @@ export default function CouponForm({ initial, onCancel, onSubmit, busy }) {
             : String(Math.round(initial.min_amount / 100)),
         expiryDate: toLocalDatetimeInput(initial.expiry_date),
         status: initial.status || 'active',
+        source: initial.source || '',
         notes: initial.notes || '',
       })
     } else {
@@ -111,6 +113,7 @@ export default function CouponForm({ initial, onCancel, onSubmit, busy }) {
       minAmount: minAmountRupeesNum === null ? null : Math.round(minAmountRupeesNum * 100),
       expiryDate: expiryIso,
       status: form.status,
+      source: form.source.trim() || null,
       notes: form.notes.trim() || null,
     }
 
@@ -238,6 +241,35 @@ export default function CouponForm({ initial, onCancel, onSubmit, busy }) {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm sm:col-span-1">
+          <span className="font-medium text-slate-700 dark:text-slate-300">
+            Source / Channel <span className="text-slate-400">(optional)</span>
+          </span>
+          <input
+            type="text"
+            value={form.source}
+            onChange={(event) => handleChange('source', event.target.value)}
+            maxLength={80}
+            placeholder="Instagram, YouTube, Telegram..."
+            list="coupon-source-suggestions"
+            className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 outline-none focus:shadow-[0_0_0_4px_rgba(59,130,246,0.14)] dark:border-white/10 dark:bg-slate-900/70 dark:text-white"
+          />
+          <datalist id="coupon-source-suggestions">
+            <option value="Instagram" />
+            <option value="YouTube" />
+            <option value="Telegram" />
+            <option value="WhatsApp Broadcast" />
+            <option value="Facebook" />
+            <option value="Twitter" />
+            <option value="Affiliate" />
+            <option value="Friend Referral" />
+            <option value="Other" />
+          </datalist>
+          <span className="text-[11px] text-slate-400">
+            Track kahan yeh coupon share kiya — dashboard me attribution dikhega.
+          </span>
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm sm:col-span-2">

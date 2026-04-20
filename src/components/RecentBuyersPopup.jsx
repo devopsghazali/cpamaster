@@ -65,7 +65,7 @@ export default function RecentBuyersPopup() {
       <AnimatePresence mode="wait">
         {visible && (
         <motion.div
-          key={`${buyer.name}-${buyer.course}-${index}`}
+          key={`${buyer.name}-${index}`}
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
           animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
@@ -81,8 +81,7 @@ export default function RecentBuyersPopup() {
             </div>
             <p className="truncate text-[12.5px] leading-5 text-slate-700 dark:text-slate-200 sm:text-[13px]">
               <span className="font-semibold text-slate-950 dark:text-white">{buyer.name}</span>{' '}
-              from {buyer.city} joined{' '}
-              <span className="font-semibold text-slate-950 dark:text-white">{buyer.course}</span>
+              from {buyer.city} joined
               {buyer.relativeTime && (
                 <span className="text-slate-500 dark:text-slate-400"> · {buyer.relativeTime}</span>
               )}

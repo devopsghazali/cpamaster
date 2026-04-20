@@ -6,6 +6,7 @@ import JoinCoursesPage from './pages/JoinCoursesPage'
 import FreeGuidePage from './pages/FreeGuidePage'
 import PaymentSuccessPage from './pages/PaymentSuccessPage'
 import AdminPage from './pages/AdminPage'
+import DashboardPage from './pages/DashboardPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -50,6 +51,7 @@ function AnimatedRoutes() {
           <Route path="/free-guide" element={<FreeGuidePage />} />
           <Route path="/success" element={<PaymentSuccessPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
