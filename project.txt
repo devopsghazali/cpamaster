@@ -373,5 +373,45 @@ SESSION — 2026-04-20 (Part I — Coupon "already used" hint)
     clean.
 
 ================================================================
+SESSION — 2026-04-20 (Part J — Form polish + success overlay +
+                      1-on-1 chat number swap)
+================================================================
+
+35. REFUND CHECKBOX LABEL — ENGLISH:
+  - ApplyNowModal.jsx me checkbox pehle Hinglish me tha:
+      "Maine Refund Policy padh li hai aur main issey sahmat hoon."
+  - Ab English:
+      "I have read and agree to the Refund Policy."
+  - "Refund Policy" wala part blue clickable link hai →
+    /join-courses#refund-policy (new tab, scroll-mt-20 section pe
+    direct land karta hai). RefundPolicySection me id="refund-policy"
+    already set tha.
+
+36. PAYMENT SUCCESS FORM-FLASH FIX:
+  - PEHLE: Razorpay payment success → verifyPayment backend call
+    chalta → us 400-900ms me form wapas dikhta (busy label ke
+    saath) → fir /success pe redirect. User ko confusing lag raha
+    tha ("payment hua ya nahi, form kyun dikha wapas?").
+  - FIX: onSuccess handler me setCompleted(true) ko
+    verifyPayment se PEHLE kar diya. Plus modal ke andar ek
+    absolute-positioned z-10 overlay add kiya jo completed=true
+    hote hi poora modal cover kar leta hai — green BadgeCheck
+    circle + "Payment Successful" heading + "Opening your access..."
+    spinner. Redirect hone tak user ko sirf success state dikhti
+    hai, form ki jhalak nahi milti.
+
+37. 1-on-1 CHAT BUTTON NUMBER SWAP:
+  - src/data/links.js → "Clear Doubts With Me" (Personal 1-on-1 chat)
+    button ka href pehle wa.me/917905523824 tha
+  - Ab wa.me/918299745166 hai (naya personal mentorship number)
+  - Support/WhatsApp wale baaki references (PaymentSuccessPage,
+    RefundPolicySection, project.txt support) abhi bhi 7905523824
+    pe hain — wo general support ke liye alag rakha, bas main UI
+    ka 1-on-1 button shift hua.
+
+38. BUILD:
+  - npm run build: 2168 modules, ~502 KB JS (152+ KB gzip) clean
+
+================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { X } from 'lucide-react'
+import { BadgeCheck, Loader2, X } from 'lucide-react'
 import {
   createOrder,
   simulatePlaceholderPurchase,
@@ -130,6 +130,7 @@ export default function ApplyNowModal({ course, open, onClose }) {
         order,
         customer,
         onSuccess: async (paymentResponse) => {
+          setCompleted(true)
           const verified = await verifyPayment({
             purchaseId: order.purchaseId,
             courseId: course.id,
@@ -141,7 +142,6 @@ export default function ApplyNowModal({ course, open, onClose }) {
             status: 'verified',
             createdAt: new Date().toISOString(),
           }
-          setCompleted(true)
           persistAndNavigate(stamped, navigate)
         },
         onDismiss: () => setBusy(false),
@@ -199,6 +199,23 @@ export default function ApplyNowModal({ course, open, onClose }) {
             >
               <X size={18} />
             </button>
+
+            {completed && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-[28px] bg-white/95 px-6 text-center backdrop-blur-sm dark:bg-slate-950/95">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 text-slate-950 shadow-[0_24px_60px_-24px_rgba(16,185,129,0.65)]">
+                  <BadgeCheck size={32} />
+                </div>
+                <div>
+                  <div className="text-xl font-bold tracking-tight text-slate-950 dark:text-white">
+                    Payment Successful
+                  </div>
+                  <div className="mt-2 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <Loader2 size={14} className="animate-spin" />
+                    Opening your access...
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="px-6 pb-2 pt-7 sm:px-8">
               <h3 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-[26px]">
@@ -297,7 +314,7 @@ export default function ApplyNowModal({ course, open, onClose }) {
                   className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 accent-blue-600 dark:border-white/20"
                 />
                 <span className="leading-6">
-                  Maine{' '}
+                  I have read and agree to the{' '}
                   <a
                     href="/join-courses#refund-policy"
                     target="_blank"
@@ -305,8 +322,8 @@ export default function ApplyNowModal({ course, open, onClose }) {
                     className="font-semibold text-blue-600 underline decoration-blue-400/50 underline-offset-2 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200"
                   >
                     Refund Policy
-                  </a>{' '}
-                  padh li hai aur main issey sahmat hoon.
+                  </a>
+                  .
                 </span>
               </label>
 
