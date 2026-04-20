@@ -598,6 +598,88 @@ Context:
     API add kar sakte hain, but rule-based abhi sufficient
     hai 95% queries ke liye.
 
+
+================================================================
+  PART M — CHATBOT v2 (bilingual + clearer replies + fixes)
+  (Date: 2026-04-21; same day as Part L)
+================================================================
+
+Context:
+  User ne test kiya to paaya ki "coupon kaise lagaun?" pe JOIN
+  ka reply aa raha tha (generic 'kaise' keyword JOIN rule me
+  tha aur COUPON ke pehle match ho raha tha). Aur user ne
+  3 aur behtar cheezein maangi:
+    (a) Coupon reply ko step-by-step clearer karo
+    (b) Refund reply mein actual 24h rule + access-opened
+        condition add karo
+    (c) Earnings question add karo — "first day se, agar
+        mehnat karo to"
+    (d) English question ka English jawab dena chahiye
+
+54. BUG FIX — COUPON vs JOIN conflict:
+  - Problem: JOIN rule me 'kaise' keyword tha, iterate order
+    me JOIN ko COUPON ke pehle check kar raha tha → 'coupon
+    kaise' query JOIN match kar raha tha
+  - Fix: JOIN rule se 'kaise' hataya. JOIN ab sirf specific
+    tokens pe match: join, enroll, purchase, sign up,
+    register, how to buy, how to join, how do i join, buy
+    karu, buy kare, buy the course
+  - Rule ordering bhi tweak: COUPON, REFUND ab JOIN ke pehle
+    declared hain — aur bhi extra safety
+
+55. BILINGUAL SUPPORT:
+  - Added HI_WORDS set (~45 common roman-hindi markers:
+    kaise, kya, kitna, hai, karo, milega, mein, bhai, aap,
+    hain, chahiye, sakte, etc.)
+  - New detectLang(text) function: tokenize input, agar
+    koi HI_WORDS match kare to 'hi' return, warna 'en'
+  - Har rule ke paas ab replyHi + replyEn donon hain
+  - BLOCKED_KEYWORDS deflection + PERSONAL_KEYWORDS
+    deflection + fallback sab bilingual
+  - Example: "How much is the fee?" → English reply
+    "The CPA Master course fee is ₹2399..."
+  - Example: "Fees kitni hai?" → Hinglish reply
+
+56. COUPON REPLY (clearer, 4 steps):
+  - "Coupon lagana simple hai:
+     1. 'Join Courses' pe jao, course ke 'Apply Now' button
+        pe click karo
+     2. Form mein neeche coupon box dikhega — apna code
+        type ya paste karo
+     3. 'Apply' pe click karo — discounted price turant
+        update ho jaayegi
+     4. Payment complete karo
+     Note: same email pe coupon sirf ek baar chalta hai,
+     isliye fresh email use karo."
+  - English equivalent provided
+
+57. REFUND REPLY (3 point policy):
+  - "Refund policy limited hai:
+     1. Payment ke 24 ghante andar refund claim kar sakte
+        ho, sirf tab jab video access nahi liya ho
+     2. Ek baar Drive link kholne ke baad refund nahi milta
+        (course consumed)
+     3. Technical issue ya wrong payment ke case mein
+        pehle WhatsApp pe baat karo — wo verify karke
+        resolve karte hain"
+  - English equivalent provided
+
+58. NEW EARNINGS RULE:
+  - Keywords: earning, earnings, income, kab se, kab milega,
+    kab start, kab shuru, kab se earning, paisa kab, kamayi,
+    kamai, start earning, how soon, when will i earn, when
+    earnings, result kab
+  - Reply (Hi): "Earnings first day se hi start ho sakti
+    hai — lekin tabhi jab aap mehnat karoge aur course mein
+    sikhai cheez apply karoge. Course strategies deta hai;
+    effort aapka decide karega kitni jaldi result aayega."
+  - Reply (En): parallel English
+
+59. BUILD:
+  - 2170 modules, 695 KB JS / 217 KB gzip (+2 KB increment
+    from v1 — replyEn strings ki addition)
+  - 0 errors
+
 ================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================
