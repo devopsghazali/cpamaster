@@ -142,6 +142,15 @@ export default function ApplyNowModal({ course, open, onClose }) {
             status: 'verified',
             createdAt: new Date().toISOString(),
           }
+          if (typeof window !== 'undefined' && window.posthog) {
+            window.posthog.capture('payment_success', {
+              course_id: course.id,
+              course_name: course.name,
+              amount: finalAmount,
+              coupon_code: coupon?.code || null,
+              discount_amount: discountAmount,
+            })
+          }
           persistAndNavigate(stamped, navigate)
         },
         onDismiss: () => setBusy(false),

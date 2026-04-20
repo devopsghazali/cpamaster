@@ -71,6 +71,15 @@ export default function CouponInput({
       setApplied(payload)
       setCode(payload.code)
       onApplied?.(payload)
+      if (typeof window !== 'undefined' && window.posthog) {
+        window.posthog.capture('coupon_applied', {
+          code: payload.code,
+          discount_type: payload.discountType,
+          discount_value: payload.discountValue,
+          final_amount: payload.finalAmount,
+          course_id: course.id,
+        })
+      }
     } catch (err) {
       setError(err?.message || 'Unable to validate coupon right now.')
       setApplied(null)

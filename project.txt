@@ -412,6 +412,99 @@ SESSION — 2026-04-20 (Part J — Form polish + success overlay +
 38. BUILD:
   - npm run build: 2168 modules, ~502 KB JS (152+ KB gzip) clean
 
+
+================================================================
+  PART K — POSTHOG ANALYTICS INTEGRATION
+  (Date: 2026-04-20; after Part J session ended)
+================================================================
+
+Context:
+  User ko chahiye tha proper visitor analytics — kaun user aaya,
+  kitne baje aaya, kahan click kiya, konse page pe gaya, kahan
+  chhoda. /dashboard (admin console) sirf sales/purchases dikhata
+  hai; traffic + behavior funnel ke liye alag tool chahiye tha.
+  Free tier options compare kiye: Vercel Analytics (basic), GA4
+  (setup heavy + UI purana), custom Supabase (quota khayega),
+  PostHog (free 1M events/mo + session replay + heatmaps + funnels).
+  User ne PostHog chosen.
+
+39. POSTHOG SIGNUP + PROJECT:
+  - User ne posthog.com pe free signup kiya, US Cloud region
+  - Project ID: 389986
+  - Project API Key (public write-only, client-safe):
+      phc_vP4rYmhgwBkMWMJEEdk6Vw9FtGNxkKCiPoqjauJm9GNc
+  - API host: https://us.i.posthog.com
+
+40. SDK INSTALL:
+  - website_react/ me: npm install posthog-js
+  - 38 packages added, 0 vulnerabilities
+  - Package: posthog-js (latest)
+
+41. MAIN.JSX INIT (src/main.jsx):
+  - Top pe import posthog from 'posthog-js'
+  - App render se pehle posthog.init() call:
+      * token: phc_vP4rYmhgwBkMWMJEEdk6Vw9FtGNxkKCiPoqjauJm9GNc
+      * api_host: https://us.i.posthog.com
+      * defaults: '2026-01-30' (PostHog latest defaults)
+      * person_profiles: 'identified_only' (anonymous users ke
+        liye profile nahi banegi — privacy friendly)
+      * autocapture: true (saare button clicks, page nav, form
+        submit auto capture)
+      * capture_pageview: true + capture_pageleave: true
+        (bounce rate + session duration ke liye)
+      * session_recording.maskAllInputs: true
+        (ALL input fields masked — email, phone, coupon, name
+        replay me dikhai nahi dete — privacy compliance)
+      * maskInputOptions: password, email, tel = true
+  - window.posthog = posthog (global taaki child components
+    custom events capture kar saken)
+
+42. CUSTOM EVENTS:
+  - src/components/CouponInput.jsx: successful apply ke baad
+    window.posthog.capture('coupon_applied', {
+      code, discount_type, discount_value, final_amount, course_id
+    }) — kaunsa coupon kitna chal raha hai wo pata chalega
+  - src/components/ApplyNowModal.jsx: Razorpay verifyPayment
+    success ke baad (persistAndNavigate se pehle):
+    window.posthog.capture('payment_success', {
+      course_id, course_name, amount, coupon_code, discount_amount
+    }) — revenue funnel + payment_success conversion rate
+
+43. KYA MILEGA POSTHOG DASHBOARD PE:
+  - Live visitors count, unique visitors, pageviews
+  - Har user ka exact journey: landing → click path → exit
+  - Session replays (form inputs masked, rest visible)
+  - Heatmap har page pe (kahan click ho raha, kahan scroll ruk
+    raha)
+  - Funnels banayein: landing → /join-courses → apply click →
+    coupon_applied → payment_success (drop-off % har step pe)
+  - Country/city/device/browser split automatic
+  - Bounce rate, time on page
+
+44. PRIVACY NOTES:
+  - person_profiles='identified_only' — anonymous trackers ko
+    PostHog profile nahi milta (default user count sirf
+    verified buyers ke paas jaayega agar hum identify call
+    karein; abhi identify nahi kar rahe to saare visits
+    anon-only = quota safe)
+  - session_recording.maskAllInputs=true — email/phone/name/
+    coupon replay me asterisk dikhata hai, real value nahi
+
+45. BUILD:
+  - npm run build: 2169 modules transformed,
+    681 KB JS (212 KB gzip) — PostHog SDK add hone se size
+    badha but gzip me bhi ~60 KB+ increment acceptable hai
+  - 0 errors
+
+46. VERIFY KAISE KARE (after deploy):
+  - www.cpamaster.online kholo → PostHog dashboard me
+    Activity > Live events me apne visits real-time dikhein
+  - Session replay tab me apna session play hona chahiye,
+    form fields asterisk ke saath
+  - /join-courses pe apply form submit karo (test coupon ya
+    real buy) → custom event coupon_applied, payment_success
+    Events > Events list me dikhai dena chahiye
+
 ================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================
