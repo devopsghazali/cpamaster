@@ -7,6 +7,7 @@ import FreeGuidePage from './pages/FreeGuidePage'
 import PaymentSuccessPage from './pages/PaymentSuccessPage'
 import AdminPage from './pages/AdminPage'
 import DashboardPage from './pages/DashboardPage'
+import ChatBot from './components/ChatBot'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -63,6 +64,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <AnimatedRoutes />
+      <ChatBot />
     </>
   )
 }

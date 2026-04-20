@@ -505,6 +505,99 @@ Context:
     real buy) → custom event coupon_applied, payment_success
     Events > Events list me dikhai dena chahiye
 
+
+================================================================
+  PART L — IN-APP SUPPORT CHATBOT (rule-based, zero API)
+  (Date: 2026-04-21)
+================================================================
+
+Context:
+  User ne poocha tha free chatbot add karna chahiye. AI API
+  (Gemini/Groq) vs rule-based option me rule-based pick kiya
+  gaya kyunki: (a) zero cost, zero quota, (b) predictable
+  answers (security), (c) business model WhatsApp 1-on-1 pe
+  hai — bot ka kaam sirf FAQ + escalate hai.
+
+  SECURITY REQUIREMENT (user-specified):
+  "security breach na ho. hamein database to touch hi nahi
+   karwaan hai, us se related kuch bhi nahi."
+
+47. NEW FILE — src/components/ChatBot.jsx:
+  - Fully client-side React component, koi fetch/API call
+    nahi, koi Supabase/Razorpay touch nahi
+  - Messages sirf useState me, koi localStorage/DB persist
+    nahi (refresh = fresh chat)
+  - Input max 200 chars (UI safety)
+  - React auto-escapes text (XSS safe)
+  - Keyword matcher (lowercase, includes-based) with 3-layer
+    guard:
+      LAYER 1 - BLOCKED_KEYWORDS (deflect):
+        admin, dashboard, supabase, api key, apikey, token,
+        database, password, razorpay key, backend, source code,
+        github, hack, crack, exploit, sql, bypass, leak,
+        secret, service role, jwt, .env
+        → Reply: "Yeh technical/internal query hai — main
+           jawab nahi de sakta."
+      LAYER 2 - PERSONAL_KEYWORDS (privacy deflect):
+        my purchase, mera payment, mera order, mera coupon,
+        kya maine, check karo mera, my account, payment
+        status, refund status, etc
+        → Reply: "Personal purchase details check nahi kar
+           sakta. WhatsApp +91 82997 45166 pe verify hoga."
+      LAYER 3 - RULES (14 topic categories):
+        greeting, fees (₹2399), course content, refund,
+        join-process (5-step numbered), coupon, language,
+        duration, access-after-payment, whatsapp/mentor,
+        certificate, recording, device, safety/trust, thanks
+      FALLBACK: "Samajh nahi aaya. Clear puch sakte ho ya
+        quick options use karo."
+
+48. UI DESIGN:
+  - Floating button bottom-right fixed (h-14 w-14, z-70)
+  - Gradient (blue → cyan → emerald) matching site theme
+  - Icon toggles MessageCircle ↔ X with rotate animation
+  - Panel: 92vw wide, max 380px, 70vh tall max 540px
+  - Header: gradient, "CPA Master Assistant", "Auto-reply ·
+    Hinglish" subtitle
+  - Scrolling messages area (auto-scroll to bottom on new msg)
+  - Quick-question chips above input:
+      'Fees kitni hai?', 'Course me kya milega?',
+      'Kaise join karun?', 'Coupon kaise lagaun?'
+    Plus a green 'WhatsApp support' escalation chip
+    (wa.me/918299745166)
+  - Text input + send button (disabled when empty)
+  - Dark mode support throughout
+
+49. ROUTE HIDING:
+  - HIDDEN_PATHS = ['/admin', '/dashboard']
+  - ChatBot component early-returns null on these paths
+    (useLocation hook) → admin console par chatbot nahi
+    dikhega (internal pages saaf rakhna)
+
+50. MOUNT:
+  - src/App.jsx me ChatBot globally mounted (Routes ke bahar
+    lekin BrowserRouter ke andar — useLocation ke liye
+    zaroori)
+
+51. BUILD:
+  - 2170 modules (+1 ChatBot)
+  - 690 KB JS / 215 KB gzip (+9 KB gzip increment — acceptable)
+  - 0 errors
+
+52. WHAT THE BOT WILL NEVER DO (design guarantees):
+  - No fetch() / XHR / WebSocket — pure JS string matching
+  - No auth/session/cookie reading
+  - No localStorage reads beyond what React doesn't touch
+  - No dangerouslySetInnerHTML anywhere
+  - No admin/dashboard/db info leak — blocklist handles it
+  - No personal purchase lookup — deflects to WhatsApp
+  - No user input stored server-side (no server at all)
+
+53. FUTURE SCOPE (not done now):
+  - Agar AI chahiye to main.jsx se PostHog ke tarah Gemini
+    API add kar sakte hain, but rule-based abhi sufficient
+    hai 95% queries ke liye.
+
 ================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================
