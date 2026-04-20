@@ -89,5 +89,39 @@ SESSION — 2026-04-20 (Part B — Go Live + Video Hero + Popup v2)
   karo 1 cheap course se, phir full launch.
 
 ================================================================
+SESSION — 2026-04-20 (Part C — /admin "Failed to fetch" FIX)
+================================================================
+
+9. BUG: /admin login pe token daalte hi "Failed to fetch" aata tha.
+
+10. ROOT CAUSE:
+  - supabase/functions/_shared/cors.ts me
+    Access-Control-Allow-Headers list me sirf
+    "authorization, x-client-info, apikey, content-type,
+     x-razorpay-signature" tha.
+  - AdminLogin.jsx → lib/admin.js → adminRequest() request me
+    2 custom headers bhejta hai: x-admin-token, x-admin-actor.
+  - Browser preflight (OPTIONS) response me ye headers allowed
+    nahi dikhe, so Chrome ne actual POST kabhi bheji hi nahi.
+  - Result: frontend ko TypeError: Failed to fetch mila
+    (network level error, 401 nahi).
+
+11. FIX:
+  - _shared/cors.ts → Access-Control-Allow-Headers me
+    "x-admin-token, x-admin-actor" add kiye.
+  - Ye file admin_coupons edge fn use karti hai, so us fn ko
+    redeploy karna zaroori hai taaki naya CORS live ho.
+  - Deploy command:
+      npx supabase functions deploy admin_coupons
+        --no-verify-jwt --project-ref orrozpaelhogpqemngfj
+    (SUPABASE_ACCESS_TOKEN env var chahiye ya supabase login)
+
+12. SAME FIX DUSRI FUNCTIONS PE:
+  - create_order, verify_payment, validate_coupon,
+    razorpay_webhook, recent_buyers — sab same _shared/cors.ts
+    use karte hain, so in sabko bhi redeploy karke consistent
+    rakhna sahi rahega (cheap, koi behavior nahi badalti).
+
+================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================
