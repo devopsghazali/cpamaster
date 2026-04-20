@@ -296,5 +296,56 @@ SESSION — 2026-04-20 (Part G — Dashboard Live + Success Card Clarity)
     User ne purane URL pe test kiya isliye confusion hua.
 
 ================================================================
+SESSION — 2026-04-20 (Part H — /dashboard 404 fix + Success copy)
+================================================================
+
+26. BUG: /dashboard UI pe "Failed to fetch" wapas aa raha tha.
+    Admin console header + Sales Dashboard heading load ho rahi
+    thi (static HTML) lekin summary/list_purchases calls fail.
+
+27. ROOT CAUSE (verified via curl preflight):
+  - OPTIONS https://.../functions/v1/admin_dashboard → 404
+    (sb-error-code: NOT_FOUND)
+  - Part G me project.txt me likha tha ki user ne khud deploy
+    kiya, par actually deploy nahi hua tha — live environment
+    me function missing tha. Browser ko preflight pe 404 milta
+    tha, isliye POST kabhi bheji hi nahi → TypeError: Failed
+    to fetch.
+
+28. FIX:
+  - User ne naya Supabase access token diya
+    (sbp_de6dde25...a05d4b0 — is bhi chat me leak hua, rotate
+    karna zaroori, 1st-time offender nahi)
+  - SUPABASE_ACCESS_TOKEN=<token> npx supabase functions deploy
+    admin_dashboard --no-verify-jwt --project-ref
+    orrozpaelhogpqemngfj → Deployed OK
+  - Re-verify: OPTIONS → 200, access-control-allow-headers me
+    x-admin-token, x-admin-actor dono present
+  - /dashboard ab purchases list karke dikha dega
+
+29. SUCCESS CARD STEP 2 COPY UPDATE:
+  - PaymentSuccessPage.jsx me step 2 pehle bolta tha
+    "Name + payment ID bhejna"
+  - Problem: user ke paas razorpay payment ID hoti hi nahi
+    (woh hame backend me dikhti hai, customer ko nahi) — so
+    customer confused hota tha.
+  - Naya copy:
+      "Apna Name + Payment Screenshot bhejna, mentorship
+       turant start hogi."
+  - Verification workflow: screenshot + form ke naam se hum
+    /dashboard me match karke mentorship start karenge.
+
+30. USER ACTION ITEMS (abhi pending):
+  ⚠ sbp_de6dde25... access token revoke + rotate (Supabase
+     dashboard → Account → Access Tokens) — ye naya token hai,
+     Part D wala purana tha (already revoked)
+  ⚠ Previous Part D list ke baaki items aur valid hain
+     (Drive folder rotate, Razorpay keys optional rotate)
+
+31. BUILD:
+  - npm run build: 2168 modules, 501.99 KB JS (152.47 KB gzip)
+    clean, koi errors nahi
+
+================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================

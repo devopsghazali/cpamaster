@@ -94,7 +94,10 @@ export default function PaymentSuccessPage() {
                   >
                     {SUPPORT_WHATSAPP_NUMBER}
                   </a>
-                  . Name + payment ID bhejna, mentorship turant start hogi.
+                  .
+                  <br />
+                  Apna <strong>Name + Payment Screenshot</strong> bhejna,
+                  mentorship turant start hogi.
                 </span>
               </li>
             </ol>
