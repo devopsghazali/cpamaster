@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { FileText, Mail, ShieldAlert } from 'lucide-react'
 
-const SUPPORT_EMAIL = 'kaif85725@gmail.com'
+const SUPPORT_EMAIL = 'kaif829974@gmail.com'
 
 const clauses = [
   {

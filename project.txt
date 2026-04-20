@@ -1700,5 +1700,61 @@ FILE MAP (new + modified is session me):
   src/App.jsx                                             (mod)
 
 ================================================================
+  SESSION 2026-04-20 (post-coupon): support contact rotate
+  + push to origin
+================================================================
+
+CONTEXT:
+  User ne kaha: "ab live per shift kar do, Razorpay live keys
+  aapke paas hain" — clarify: AI ke paas user ke private
+  keys NAHI hote. Frontend already live mode me hai
+  (VITE_PAYMENT_MODE=live). Live shift = Supabase secrets me
+  RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET / RAZORPAY_WEBHOOK_SECRET
+  set karna — only user hi apne Razorpay dashboard se kar sakta
+  hai. Code side pe koi change nahi chahiye.
+
+  Saath hi, support contact details update:
+    - Email: kaif85725@gmail.com  →  kaif829974@gmail.com
+    - PaymentSuccessPage WhatsApp: community link se individual
+      WhatsApp chat → https://wa.me/917905523824
+
+CHANGES:
+  1) src/pages/PaymentSuccessPage.jsx
+     - SUPPORT_EMAIL = 'kaif829974@gmail.com'
+     - SUPPORT_WHATSAPP = 'https://wa.me/917905523824'
+       (pehle community invite link tha)
+  2) src/components/RefundPolicySection.jsx
+     - SUPPORT_EMAIL = 'kaif829974@gmail.com'
+
+NOT CHANGED:
+  - WhatsApp community link (src/data/links.js) intentionally
+    kept — home page "Community" card abhi bhi group invite
+    karta hai. Sirf payment success page individual support
+    pe point karta hai jaise user ne bola.
+  - project.txt line ~1395 "kaif85725@gmail.com" mentioned in
+    historical design-notes — historical log, not active code,
+    isliye untouched.
+
+LIVE-SHIFT DEPLOY CHECKLIST (user has to run):
+  Razorpay dashboard → Live Mode → API Keys → generate.
+    supabase secrets set \
+      RAZORPAY_KEY_ID=rzp_live_xxxx \
+      RAZORPAY_KEY_SECRET=xxxx \
+      RAZORPAY_WEBHOOK_SECRET=xxxx
+    supabase functions deploy create_order verify_payment \
+      validate_coupon admin_coupons razorpay_webhook
+  Vercel env: already VITE_PAYMENT_MODE=live. No new var needed.
+  Webhook URL in Razorpay dashboard:
+    https://<project-ref>.functions.supabase.co/razorpay_webhook
+
+BUILD:
+  npm run build → pass (2166 modules, 481.49 kB / 148.66 kB gz)
+
+GIT:
+  Local ahead of origin/main by 1 commit (d9c3c78 coupon system
+  from last session). Is session ka commit bhi karke push
+  dono ek saath origin/main pe bhejenge.
+
+================================================================
   End of project.txt
 ================================================================

@@ -6,8 +6,8 @@ import Background from '../components/Background'
 import ThemeToggle from '../components/ThemeToggle'
 import Footer from '../components/Footer'
 
-const SUPPORT_EMAIL = 'kaif85725@gmail.com'
-const SUPPORT_WHATSAPP = 'https://chat.whatsapp.com/IWyGJtc47U997DONukzHEO'
+const SUPPORT_EMAIL = 'kaif829974@gmail.com'
+const SUPPORT_WHATSAPP = 'https://wa.me/917905523824'
 const storageKey = 'cpamaster-last-purchase'
 
 function decodePurchasePayload(value) {
