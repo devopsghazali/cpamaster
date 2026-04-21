@@ -784,6 +784,113 @@ Context:
   - Trend chart 7 days ka show karta hai — abhi kuch days
     sirf rehoon ge, time ke saath full hota jaayega.
 
+69. POSTHOG 403 — KEY SCOPE ISSUE (manual fix):
+  - First /dashboard test pe error: "API key missing
+    required scope 'query:read'"
+  - Fix: PostHog Settings → Personal API Keys → edit the
+    created key → Scopes me 'query:read' enable karo
+    (ya 'All access' select karo) → Save
+  - Key value same rehti hai; sirf scope update hota hai
+  - Supabase secret update nahi karna — key same hai
+
+
+================================================================
+  PART O — EXIT OFFER BANNER (FIRST10 non-blocking)
+  (Date: 2026-04-21)
+================================================================
+
+Context:
+  User ne maanga: jab koi /join-courses page chhodne lage
+  (exit-intent) YA ApplyNowModal ko X se close kare bina
+  payment ke, to FIRST10 coupon offer dikhe. CRITICAL:
+  UI BLOCK na ho, user kaam karta rahe — full-screen modal
+  NAHI, side/corner banner sahi.
+
+  Coupon details (already active in admin):
+    Code: FIRST10
+    Discount: ₹199 OFF (Fixed)
+    Usage: 0/10 (limited slots)
+    Expiry: No expiry
+    Source tag: "this will be on the main ui"
+    Status: active
+
+70. NEW COMPONENT — src/components/ExitOfferBanner.jsx:
+  - Floating banner, bottom-center on mobile, bottom-right
+    on desktop (fixed positioning, z-65)
+  - Max-width 420px — doesn't cover full viewport
+  - Gradient header (emerald→cyan→blue) "Ruk ja! Ek offer
+    hai tere liye" with close X
+  - Body: "Coupon FIRST10 use karke seedha ₹199 OFF paao"
+    + copy-to-clipboard coupon pill
+  - Urgency line: "Only 10 slots · Pehle aao pehle paao"
+  - CTAs: "Apply Now" (primary — scrolls to #courses
+    section) + "Later" (dismiss)
+  - Auto-dismiss after 20 seconds
+  - Session gate: sessionStorage 'cpa-exit-offer-shown'
+    — ek tab session mein sirf 1 baar dikhe
+  - React AnimatePresence for slide-up enter/exit
+
+71. TRIGGERS (both call same function):
+  (a) Exit intent: document 'mouseleave' event with
+      event.clientY <= 0 (mouse viewport ke top se bahar
+      nikla — tab/close button ki taraf)
+  (b) Custom window event 'cpa-exit-offer-trigger'
+      dispatched from ApplyNowModal when closed without
+      payment completion
+
+72. APPLYNOWMODAL WIRING:
+  - New useRef wasOpenRef tracks if modal was actually
+    opened (mount-open flag)
+  - useEffect watches [open, completed]:
+      * If open true → set wasOpenRef = true
+      * If open becomes false AND completed is false →
+        dispatch 'cpa-exit-offer-trigger' event
+      * If open false + completed true → reset ref, no
+        event (user paid — shouldn't see offer)
+  - Zero coupling: ApplyNowModal doesn't know about
+    ExitOfferBanner; they communicate via custom event
+
+73. NON-BLOCKING GUARANTEES:
+  - No backdrop overlay — page fully interactive
+  - Banner position fixed, z-65 (below chatbot z-70,
+    above most content)
+  - pointerEvents: default (banner has them, rest of page
+    unaffected)
+  - User can scroll/click anywhere else normally
+  - Close button always accessible
+
+74. PRIVACY / SAFETY:
+  - Zero network calls from banner
+  - Zero user data read/written (no email, no personal
+    info)
+  - Only storage: sessionStorage flag 'cpa-exit-offer-shown'
+    (1 byte, clears on tab close)
+  - No tracking event (can add posthog.capture later if
+    we want to measure conversion from banner)
+
+75. MOUNT:
+  - src/pages/JoinCoursesPage.jsx: import ExitOfferBanner,
+    render inside <> below RecentBuyersPopup
+  - Only mounts on /join-courses — other pages unaffected
+
+76. BUILD:
+  - 2171 modules (+1 ExitOfferBanner)
+  - 706 KB JS / 219 KB gzip (+1 KB)
+  - 0 errors
+
+77. UX BEHAVIOUR (verify after deploy):
+  - Visit /join-courses, open Apply Now modal, click X
+    WITHOUT paying → banner slides up bottom-right
+  - Banner pe "Copy" click karo → FIRST10 clipboard me
+    copy → chip "Copied ✓" 1.6s ke liye
+  - "Apply Now" click → banner close + page #courses
+    section pe scroll (user fir se Apply Now open kar
+    sakta hai)
+  - Same session mein banner dubara NAHI dikhega
+  - New tab / refresh → session reset → dikh sakta hai
+  - Mouse top-edge cross karo (tab bar ki taraf) → bhi
+    trigger
+
 ================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================

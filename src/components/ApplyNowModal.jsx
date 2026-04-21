@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { BadgeCheck, Loader2, X } from 'lucide-react'
@@ -79,6 +79,22 @@ export default function ApplyNowModal({ course, open, onClose }) {
       setAgreedRefund(false)
     }
   }, [open])
+
+  const wasOpenRef = useRef(false)
+  useEffect(() => {
+    if (open) {
+      wasOpenRef.current = true
+      return
+    }
+    if (wasOpenRef.current && !completed) {
+      wasOpenRef.current = false
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cpa-exit-offer-trigger'))
+      }
+    } else if (!open) {
+      wasOpenRef.current = false
+    }
+  }, [open, completed])
 
   const handleChange = (event) => {
     const { name, value } = event.target

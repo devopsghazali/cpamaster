@@ -13,6 +13,7 @@ import RefundPolicySection from '../components/RefundPolicySection'
 import FaqSection from '../components/FaqSection'
 import CommunityCta from '../components/CommunityCta'
 import Footer from '../components/Footer'
+import ExitOfferBanner from '../components/ExitOfferBanner'
 import { courses } from '../data/courses'
 
 export default function JoinCoursesPage() {
@@ -21,6 +22,7 @@ export default function JoinCoursesPage() {
       <Background />
       <ThemeToggle />
       <RecentBuyersPopup />
+      <ExitOfferBanner />
 
       <main className="relative mx-auto w-full max-w-[1180px] px-5 pb-16 pt-10 sm:px-8 sm:pt-14 lg:px-12">
         <div className="flex items-center justify-between gap-4">
