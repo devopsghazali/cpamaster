@@ -680,6 +680,110 @@ Context:
     from v1 — replyEn strings ki addition)
   - 0 errors
 
+
+================================================================
+  PART N — POSTHOG → /DASHBOARD INTEGRATION
+  (Date: 2026-04-21)
+================================================================
+
+Context:
+  User PostHog branding nahi chahta — UI hamara hona chahiye.
+  PostHog ka data /dashboard pe key insights ke saath dikhane
+  ka decision liya. Personal API key (server-side only) +
+  PostHog Query API (HogQL) approach use kiya — iframe embed
+  reject because branding visible.
+
+60. POSTHOG PERSONAL API KEY:
+  - User ne PostHog Settings → Personal API Keys se generate
+    kiya — read-scope key (phx_***REDACTED***)
+  - Stored in Supabase secret POSTHOG_API_KEY ONLY,
+    server-side, never bundled in client
+  - Project ID: 389986
+
+61. SUPABASE SECRETS SET:
+  - npx supabase secrets set POSTHOG_API_KEY=phx_... \
+      POSTHOG_PROJECT_ID=389986 --project-ref orrozpaelhogpqemngfj
+  - Confirmed: "Finished supabase secrets set."
+
+62. NEW EDGE FUNCTION — admin_analytics:
+  - Path: supabase/functions/admin_analytics/index.ts
+  - Same admin auth (assertAdmin → x-admin-token header)
+  - Rate limit: 30 requests/min per IP (PostHog quota safe)
+  - 5 parallel HogQL queries via Promise.all:
+      1. Summary: today/yesterday/week visitors, week
+         pageviews, week coupon_applies, week payments
+         (uses countDistinctIf for conditional aggregation
+          in single query)
+      2. 7-day daily trend (toDate(timestamp), GROUP BY day)
+      3. Top 6 cities (properties.$geoip_city_name)
+      4. Device split (properties.$device_type)
+      5. Top 6 sources (properties.$referring_domain)
+  - Endpoint: POST https://us.posthog.com/api/projects/{id}/query/
+    Body: { query: { kind: 'HogQLQuery', query: '...' } }
+    Auth: Bearer phx_...
+  - Response: { summary, trend, cities, devices, sources,
+    generatedAt }
+  - Error handling: PostHog 502 errors caught, returned as
+    { error } so dashboard UI can display gracefully
+
+63. DEPLOYED:
+  - npx supabase functions deploy admin_analytics
+    --no-verify-jwt --project-ref orrozpaelhogpqemngfj
+  - Confirmed: "Deployed Functions on project ...:
+    admin_analytics"
+
+64. DASHBOARD UI ADDITIONS (src/pages/DashboardPage.jsx):
+  - New constant: ANALYTICS_ENDPOINT = { endpoint: 'admin_analytics' }
+  - New state: analytics, analyticsLoading, analyticsError
+  - New fn: loadAnalytics() — adminRequest('summary', {},
+    ANALYTICS_ENDPOINT) → setAnalytics
+  - useEffect now calls load() AND loadAnalytics() in parallel
+  - handleRefresh refreshes both
+  - handleSignOut clears analytics state too
+  - 4 new helper components added:
+      a) FunnelStep — bar with label/count/percentage
+      b) MiniBars — 7-day vertical bar chart (day labels +
+         visitor count below each bar)
+      c) ListCard — generic icon+title+items list
+      d) AnalyticsSection — main wrapper with purple/pink
+         gradient theme
+
+65. WHAT /dashboard NOW SHOWS:
+  - Original Sales Dashboard: revenue, sales count, conversion,
+    coupon attribution, payment methods, purchases table
+  - NEW Traffic Insights section (purple gradient, "PostHog
+    last 7 days"):
+      * 4 stat cards: today's visitors (+ yesterday delta),
+        7-day visitors (+ pageviews), 7-day coupon applies,
+        7-day payments
+      * Conversion funnel (3 steps with % drop-off):
+        Visitors → Coupon applied → Payment success
+      * Daily visitors trend bars (Mon-Sun shape)
+      * Top cities, device split, top sources (3 list cards
+        side-by-side)
+  - Loading spinner + error display + empty state messages
+
+66. SECURITY:
+  - PostHog Personal API key NEVER in client bundle — server
+    env only
+  - Project ID also server-side
+  - admin_analytics requires x-admin-token header (same as
+    admin_dashboard) — public users can't query
+  - Rate limited 30/min per IP
+
+67. BUILD:
+  - 2170 modules, 701 KB JS / 218 KB gzip (+1 KB increment
+    from previous — small UI addition)
+  - 0 errors
+
+68. EXPECTED FIRST-LOAD STATE:
+  - PostHog SDK abhi-abhi install hua hai (Part K),
+    custom events bhi naye hain — initial dashboard load me
+    visitors=0 ya bahut kam ho sakta hai. Jaise traffic
+    badhega, cards populate hote jaayenge.
+  - Trend chart 7 days ka show karta hai — abhi kuch days
+    sirf rehoon ge, time ke saath full hota jaayega.
+
 ================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================

@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  Activity,
   ArrowLeft,
   BarChart3,
   CheckCircle2,
   CreditCard,
+  Globe,
   IndianRupee,
   LogOut,
+  MapPin,
   Megaphone,
   RefreshCw,
   Search,
   ShieldCheck,
+  Smartphone,
+  TrendingUp,
   Users,
 } from 'lucide-react'
 import Background from '../components/Background'
@@ -24,6 +29,7 @@ import {
 import { formatRupees } from '../lib/coupon'
 
 const DASHBOARD_ENDPOINT = { endpoint: 'admin_dashboard' }
+const ANALYTICS_ENDPOINT = { endpoint: 'admin_analytics' }
 
 const statusStyles = {
   verified:
@@ -80,6 +86,200 @@ function describeMethod(row) {
   return m
 }
 
+function FunnelStep({ label, count, base }) {
+  const pct = base > 0 ? Math.round((count / base) * 100) : 0
+  const widthPct = base > 0 ? Math.max(4, (count / base) * 100) : 4
+  return (
+    <div className="mt-3 first:mt-0">
+      <div className="flex items-center justify-between gap-2 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
+        <span>{label}</span>
+        <span className="text-slate-500 dark:text-slate-400">
+          {count.toLocaleString()} {base > 0 && base !== count ? `· ${pct}%` : ''}
+        </span>
+      </div>
+      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200/70 dark:bg-white/10">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500"
+          style={{ width: `${widthPct}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function MiniBars({ trend }) {
+  if (!trend?.length) return null
+  const max = Math.max(...trend.map((t) => t.visitors), 1)
+  return (
+    <div className="mt-3 flex items-end gap-1.5">
+      {trend.map((t) => {
+        const h = Math.max(6, (t.visitors / max) * 100)
+        const day = t.day ? t.day.slice(5) : ''
+        return (
+          <div key={t.day} className="flex flex-1 flex-col items-center gap-1">
+            <div
+              className="w-full rounded-t bg-gradient-to-t from-purple-500/80 to-fuchsia-400/80"
+              style={{ height: `${h}px`, minHeight: 6 }}
+              title={`${day}: ${t.visitors} visitors`}
+            />
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">
+              {day}
+            </div>
+            <div className="text-[10px] font-semibold text-slate-700 dark:text-slate-300">
+              {t.visitors}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function ListCard({ icon: Icon, title, items, valueKey = 'visitors', labelKey }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-slate-950/60">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-400">
+        <Icon size={13} />
+        <span>{title}</span>
+      </div>
+      {items?.length ? (
+        <ul className="mt-3 space-y-1.5">
+          {items.map((item, i) => (
+            <li
+              key={`${item[labelKey]}-${i}`}
+              className="flex items-center justify-between gap-3 text-[12px]"
+            >
+              <span className="truncate text-slate-700 dark:text-slate-300">
+                {item[labelKey] || 'Unknown'}
+              </span>
+              <span className="font-semibold text-slate-900 dark:text-white">
+                {Number(item[valueKey] || 0).toLocaleString()}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
+          No data yet.
+        </p>
+      )}
+    </div>
+  )
+}
+
+function AnalyticsSection({ analytics, loading, error }) {
+  return (
+    <section className="mt-6 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 p-5 dark:border-purple-400/20">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-700 dark:text-purple-300">
+          <Activity size={14} />
+          <span>Traffic Insights · PostHog (last 7 days)</span>
+        </div>
+        {loading && (
+          <RefreshCw size={14} className="animate-spin text-purple-500" />
+        )}
+      </div>
+
+      {error && (
+        <p className="mt-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-300">
+          {error}
+        </p>
+      )}
+
+      {!analytics && !error && !loading && (
+        <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+          No analytics data yet. Refresh me click karo.
+        </p>
+      )}
+
+      {analytics && (
+        <>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={Users}
+              label="Today's visitors"
+              value={(analytics.summary?.todayVisitors || 0).toLocaleString()}
+              sub={`Yesterday: ${(analytics.summary?.yesterdayVisitors || 0).toLocaleString()}`}
+              tone="emerald"
+            />
+            <StatCard
+              icon={Globe}
+              label="7-day visitors"
+              value={(analytics.summary?.weekVisitors || 0).toLocaleString()}
+              sub={`${(analytics.summary?.weekPageviews || 0).toLocaleString()} pageviews`}
+              tone="blue"
+            />
+            <StatCard
+              icon={TrendingUp}
+              label="7-day coupon applies"
+              value={(analytics.summary?.weekCouponApplies || 0).toLocaleString()}
+              sub="Custom event"
+              tone="amber"
+            />
+            <StatCard
+              icon={CheckCircle2}
+              label="7-day payments"
+              value={(analytics.summary?.weekPayments || 0).toLocaleString()}
+              sub="payment_success event"
+              tone="slate"
+            />
+          </div>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-slate-950/60">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-400">
+                Conversion funnel
+              </div>
+              <FunnelStep
+                label="Visitors"
+                count={analytics.summary?.weekVisitors || 0}
+                base={analytics.summary?.weekVisitors || 0}
+              />
+              <FunnelStep
+                label="Coupon applied"
+                count={analytics.summary?.weekCouponApplies || 0}
+                base={analytics.summary?.weekVisitors || 0}
+              />
+              <FunnelStep
+                label="Payment success"
+                count={analytics.summary?.weekPayments || 0}
+                base={analytics.summary?.weekVisitors || 0}
+              />
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-slate-950/60">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-400">
+                Daily visitors trend
+              </div>
+              <MiniBars trend={analytics.trend} />
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 lg:grid-cols-3">
+            <ListCard
+              icon={MapPin}
+              title="Top cities"
+              items={analytics.cities}
+              labelKey="city"
+            />
+            <ListCard
+              icon={Smartphone}
+              title="Device split"
+              items={analytics.devices}
+              labelKey="device"
+            />
+            <ListCard
+              icon={Globe}
+              title="Top sources"
+              items={analytics.sources}
+              labelKey="source"
+            />
+          </div>
+        </>
+      )}
+    </section>
+  )
+}
+
 function StatCard({ icon: Icon, label, value, sub, tone = 'slate' }) {
   const toneMap = {
     emerald: 'from-emerald-500/15 to-cyan-500/10 text-emerald-500',
@@ -115,6 +315,9 @@ export default function DashboardPage() {
   const [error, setError] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [analytics, setAnalytics] = useState(null)
+  const [analyticsLoading, setAnalyticsLoading] = useState(false)
+  const [analyticsError, setAnalyticsError] = useState('')
 
   const load = useCallback(
     async (filters) => {
@@ -149,9 +352,28 @@ export default function DashboardPage() {
     [],
   )
 
+  const loadAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true)
+    setAnalyticsError('')
+    try {
+      const data = await adminRequest('summary', {}, ANALYTICS_ENDPOINT)
+      setAnalytics(data)
+    } catch (err) {
+      if (err?.code === 'UNAUTHENTICATED') {
+        clearAdminCredentials()
+        setAuthed(false)
+        return
+      }
+      setAnalyticsError(err?.message || 'Unable to load PostHog analytics.')
+    } finally {
+      setAnalyticsLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (authed) {
       load({ status: statusFilter, search })
+      loadAnalytics()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authed])
@@ -161,9 +383,13 @@ export default function DashboardPage() {
     setAuthed(false)
     setSummary(null)
     setPurchases([])
+    setAnalytics(null)
   }
 
-  const handleRefresh = () => load({ status: statusFilter, search })
+  const handleRefresh = () => {
+    load({ status: statusFilter, search })
+    loadAnalytics()
+  }
 
   const handleSearchSubmit = (event) => {
     event.preventDefault()
@@ -352,6 +578,12 @@ export default function DashboardPage() {
             )}
           </>
         )}
+
+        <AnalyticsSection
+          analytics={analytics}
+          loading={analyticsLoading}
+          error={analyticsError}
+        />
 
         <form
           onSubmit={handleSearchSubmit}
