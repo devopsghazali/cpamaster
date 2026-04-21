@@ -6,6 +6,7 @@ import ThemeToggle from '../components/ThemeToggle'
 import AdminLogin from '../components/admin/AdminLogin'
 import CouponList from '../components/admin/CouponList'
 import CouponForm from '../components/admin/CouponForm'
+import BannerConfigCard from '../components/admin/BannerConfigCard'
 import {
   adminRequest,
   clearAdminCredentials,
@@ -208,6 +209,8 @@ export default function AdminPage() {
             pendingId={pendingId}
           />
         </div>
+
+        <BannerConfigCard />
       </main>
     </>
   )

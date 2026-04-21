@@ -1,11 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { BadgeCheck, CheckCircle2, Sparkles } from 'lucide-react'
 import ApplyNowModal from './ApplyNowModal'
 
 export default function CoursePurchaseCard({ course, index }) {
   const reduce = useReducedMotion()
+  const location = useLocation()
+  const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
+  const [prefilledCoupon, setPrefilledCoupon] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const rawCode = (params.get('coupon') || '').trim().toUpperCase()
+    if (!rawCode) return
+    if (index !== 0) return
+    setPrefilledCoupon(rawCode)
+    setModalOpen(true)
+    params.delete('coupon')
+    const nextSearch = params.toString()
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch ? `?${nextSearch}` : '',
+        hash: location.hash,
+      },
+      { replace: true },
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleClose = () => {
+    setModalOpen(false)
+    setPrefilledCoupon('')
+  }
 
   return (
     <>
@@ -92,7 +121,8 @@ export default function CoursePurchaseCard({ course, index }) {
       <ApplyNowModal
         course={course}
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleClose}
+        initialCouponCode={prefilledCoupon}
       />
     </>
   )

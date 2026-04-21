@@ -892,5 +892,124 @@ Context:
     trigger
 
 ================================================================
+SESSION — 2026-04-21 (Part P — Exit-Offer v2 + Banner Config)
+================================================================
+
+78. BANNER UI REWRITE (user feedback):
+  - "Ruk ja! Ek offer hai tere liye" Hinglish hata diya —
+    ab pure English me: "Limited offer" heading + coupon
+    chip + slots-text + Apply Now button (minimal)
+  - Position: bottom-LEFT desktop (sm:left-6), mobile
+    bottom-center (left-1/2 -translate-x-1/2)
+  - Auto-dismiss: 15 s (pehle 20 s tha)
+  - Width cap: max-w-[360px] (pehle 420 — aur compact)
+
+79. ROUTE-CHANGE TRIGGER FIX:
+  - Pehle ExitOfferBanner JoinCoursesPage me mount hota tha
+    → jab user /join-courses chhodta, banner bhi unmount
+    ho jata, isliye route change trigger kabhi fire nahi
+    hota tha
+  - Fix: banner ab App.jsx me mount (sabke routes pe
+    persist)
+  - New useEffect watches useLocation().pathname:
+      * prevPathRef use karke detect karo
+      * Agar prev === '/join-courses' AND next !==
+        '/join-courses' → trigger() call
+  - Pichle mouseleave + cpa-exit-offer-trigger event bhi
+    barqaraar hain (ApplyNowModal close without payment
+    still works)
+
+80. APPLY NOW — ACTUALLY APPLIES COUPON:
+  - Pehle: "Apply Now" sirf #courses pe scroll karta tha
+  - Ab: navigate('/join-courses?coupon=CODE#courses')
+  - CoursePurchaseCard (index 0 = primary course) reads
+    ?coupon= query param on mount:
+      * setPrefilledCoupon(code)
+      * Auto-opens ApplyNowModal
+      * replaceState to remove coupon param (so refresh
+        doesn't re-trigger)
+  - ApplyNowModal new prop: initialCouponCode
+  - CouponInput new props: initialCode + autoApply
+      * initialCode seeds the code state via useState init
+      * autoApply + initialCode → useRef gate ensures
+        handleApply() runs ONCE on mount
+      * Existing validate → onApplied → setCoupon flow
+        handles the rest (same as manual Apply click)
+  - Result: user "Apply Now" click → form open with
+    FIRST10 already validated + discount row visible
+
+81. ADMIN BANNER CONTROL:
+  - New migration: 20260421_site_config.sql
+      * site_config table (key TEXT PK, value JSONB,
+        updated_at, updated_by)
+      * RLS on, anon+authenticated SELECT policies
+      * Seeds 'exit_offer_banner' row with defaults
+        (FIRST10 / "10 slots only" / enabled:true)
+  - New edge function: site_config/
+      * GET / POST { action: 'get' } → public, no auth
+      * POST { action: 'set_banner', couponCode,
+        slotsText, enabled } → assertAdmin (x-admin-token)
+      * Validates: code regex ^[A-Z0-9_-]{3,32}$,
+        slotsText trim non-empty, max 120 chars
+      * Rate limited 120/min/ip
+  - Frontend:
+      * src/lib/siteConfig.js: fetchBannerConfig() (public
+        POST), updateBannerConfig() (via adminRequest)
+      * src/components/admin/BannerConfigCard.jsx: new
+        card at bottom of /admin page
+          - 2 inputs (coupon code, slots text) +
+            "Banner enabled" checkbox + Save button
+          - Shows "Saved" green tick for 2s on success
+      * ExitOfferBanner on mount fetches config, falls
+        back to DEFAULT_BANNER on any error
+          - If banner.enabled === false → no triggers
+            fire at all
+
+82. FILES CHANGED:
+  - supabase/migrations/20260421_site_config.sql (new)
+  - supabase/functions/site_config/index.ts (new)
+  - src/lib/siteConfig.js (new)
+  - src/components/admin/BannerConfigCard.jsx (new)
+  - src/components/ExitOfferBanner.jsx (rewrite)
+  - src/components/CoursePurchaseCard.jsx (query-param
+    detection + prefilled coupon)
+  - src/components/ApplyNowModal.jsx (new initialCouponCode
+    prop)
+  - src/components/CouponInput.jsx (initialCode + autoApply
+    props)
+  - src/App.jsx (mount ExitOfferBanner globally)
+  - src/pages/JoinCoursesPage.jsx (removed banner mount)
+  - src/pages/AdminPage.jsx (mount BannerConfigCard)
+
+83. DEPLOY (user ko run karne hain — CLI me login nahi
+    hai is session me):
+      npx supabase login
+      cd website_react
+      npx supabase db push --linked
+      npx supabase functions deploy site_config \
+        --no-verify-jwt --project-ref orrozpaelhogpqemngfj
+
+84. BUILD:
+  - 2173 modules, 710 KB JS / 220 KB gzip
+  - 0 errors, 0 blocking warnings
+  - Existing 500KB chunk warning only (cosmetic)
+
+85. UX TEST PLAN (post-deploy):
+  - /admin → bottom BannerConfigCard me code "FIRST20"
+    aur slots "Only 5 left" save karo → banner config
+    update
+  - /join-courses open → wait/exit-intent → banner
+    bottom-LEFT me slide-up, FIRST20 chip + "Only 5 left"
+  - "Apply Now" click → redirect back to /join-courses,
+    CoursePurchaseCard modal auto-open, coupon FIRST20
+    applied row pe dikh raha hoga with discount
+  - /join-courses se /free-guide ya / pe navigate → bhi
+    trigger (route-change detection)
+  - 15 s ke baad banner auto-dismiss
+  - Session me dubara nahi dikhega (sessionStorage flag)
+  - Admin me "Banner enabled" uncheck + save → banner
+    next load se trigger hi nahi hoga
+
+================================================================
   End of project.txt  (see projectv2.txt for reference doc)
 ================================================================

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { BadgeCheck, Loader2, Tag, X } from 'lucide-react'
 import { formatRupees, validateCoupon } from '../lib/coupon'
@@ -7,13 +7,16 @@ export default function CouponInput({
   course,
   customerEmail,
   disabled = false,
+  initialCode = '',
+  autoApply = false,
   onApplied,
   onCleared,
 }) {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(initialCode || '')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [applied, setApplied] = useState(null)
+  const autoAppliedRef = useRef(false)
 
   useEffect(() => {
     if (applied && disabled) return
@@ -21,6 +24,16 @@ export default function CouponInput({
     // If email changes after coupon was applied, drop it so backend re-reserves
     // with correct email on order create.
   }, [customerEmail, applied, disabled])
+
+  useEffect(() => {
+    if (!autoApply) return
+    if (autoAppliedRef.current) return
+    if (!initialCode) return
+    if (applied) return
+    autoAppliedRef.current = true
+    handleApply()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoApply, initialCode])
 
   const handleApply = async (event) => {
     event?.preventDefault?.()

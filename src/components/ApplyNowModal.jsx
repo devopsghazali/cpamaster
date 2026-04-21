@@ -34,7 +34,7 @@ function persistAndNavigate(purchase, navigate) {
   navigate('/success')
 }
 
-export default function ApplyNowModal({ course, open, onClose }) {
+export default function ApplyNowModal({ course, open, onClose, initialCouponCode = '' }) {
   const navigate = useNavigate()
   const reduce = useReducedMotion()
   const [form, setForm] = useState(initialForm)
@@ -295,6 +295,8 @@ export default function ApplyNowModal({ course, open, onClose }) {
                   course={course}
                   customerEmail={form.email}
                   disabled={busy || completed}
+                  initialCode={initialCouponCode}
+                  autoApply={Boolean(initialCouponCode)}
                   onApplied={(applied) => setCoupon(applied)}
                   onCleared={() => setCoupon(null)}
                 />

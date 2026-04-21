@@ -1,19 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Check, Copy, Sparkles, Tag, X } from 'lucide-react'
+import { fetchBannerConfig, DEFAULT_BANNER } from '../lib/siteConfig'
 
-const COUPON_CODE = 'FIRST10'
-const DISCOUNT_LABEL = '₹199 OFF'
-const SLOTS_LABEL = 'Only 10 slots · Pehle aao pehle paao'
 const SESSION_KEY = 'cpa-exit-offer-shown'
 const TRIGGER_EVENT = 'cpa-exit-offer-trigger'
-const AUTO_DISMISS_MS = 20_000
+const AUTO_DISMISS_MS = 15_000
+const WATCHED_PATH = '/join-courses'
 
 export default function ExitOfferBanner() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [visible, setVisible] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [config, setConfig] = useState(DEFAULT_BANNER)
   const firedRef = useRef(false)
   const dismissTimerRef = useRef(null)
+  const prevPathRef = useRef(location.pathname)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchBannerConfig().then((banner) => {
+      if (!cancelled) setConfig(banner)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     try {
@@ -23,22 +37,24 @@ export default function ExitOfferBanner() {
     } catch {
       // sessionStorage blocked — allow once per mount
     }
+  }, [])
 
-    const trigger = () => {
-      if (firedRef.current) return
-      firedRef.current = true
-      try {
-        sessionStorage.setItem(SESSION_KEY, '1')
-      } catch {
-        // ignore
-      }
-      setVisible(true)
+  const trigger = () => {
+    if (firedRef.current) return
+    if (!config.enabled) return
+    firedRef.current = true
+    try {
+      sessionStorage.setItem(SESSION_KEY, '1')
+    } catch {
+      // ignore
     }
+    setVisible(true)
+  }
 
+  useEffect(() => {
     const handleMouseLeave = (event) => {
       if (event.clientY <= 0) trigger()
     }
-
     const handleCustomEvent = () => trigger()
 
     document.addEventListener('mouseleave', handleMouseLeave)
@@ -47,7 +63,18 @@ export default function ExitOfferBanner() {
       document.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener(TRIGGER_EVENT, handleCustomEvent)
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.enabled])
+
+  useEffect(() => {
+    const prev = prevPathRef.current
+    const next = location.pathname
+    if (prev === WATCHED_PATH && next !== WATCHED_PATH) {
+      trigger()
+    }
+    prevPathRef.current = next
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, config.enabled])
 
   useEffect(() => {
     if (!visible) return undefined
@@ -62,7 +89,7 @@ export default function ExitOfferBanner() {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(COUPON_CODE)
+      await navigator.clipboard.writeText(config.couponCode)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1600)
     } catch {
@@ -72,15 +99,13 @@ export default function ExitOfferBanner() {
 
   const handleApply = () => {
     setVisible(false)
-    const target = document.getElementById('courses')
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    const code = encodeURIComponent(config.couponCode)
+    navigate(`${WATCHED_PATH}?coupon=${code}#courses`)
   }
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && config.enabled && (
         <motion.aside
           role="status"
           aria-live="polite"
@@ -88,12 +113,12 @@ export default function ExitOfferBanner() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 24, scale: 0.96 }}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 left-1/2 z-[65] w-[92vw] max-w-[420px] -translate-x-1/2 overflow-hidden rounded-3xl border border-emerald-400/40 bg-white shadow-[0_30px_80px_-20px_rgba(16,185,129,0.5)] dark:border-emerald-400/30 dark:bg-slate-950 sm:bottom-6 sm:left-auto sm:right-6 sm:translate-x-0"
+          className="fixed bottom-4 left-1/2 z-[65] w-[92vw] max-w-[360px] -translate-x-1/2 overflow-hidden rounded-3xl border border-emerald-400/40 bg-white shadow-[0_30px_80px_-20px_rgba(16,185,129,0.5)] dark:border-emerald-400/30 dark:bg-slate-950 sm:bottom-6 sm:left-6 sm:translate-x-0"
         >
-          <div className="relative bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-3 text-white">
+          <div className="relative bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-2.5 text-white">
             <div className="flex items-center gap-2 text-sm font-bold tracking-tight">
               <Sparkles size={16} />
-              <span>Ruk ja! Ek offer hai tere liye</span>
+              <span>Limited offer</span>
             </div>
             <button
               type="button"
@@ -106,18 +131,10 @@ export default function ExitOfferBanner() {
           </div>
 
           <div className="px-4 py-4">
-            <p className="text-sm text-slate-700 dark:text-slate-200">
-              Coupon{' '}
-              <span className="font-semibold text-emerald-600 dark:text-emerald-300">
-                {COUPON_CODE}
-              </span>{' '}
-              use karke seedha <strong>{DISCOUNT_LABEL}</strong> paao.
-            </p>
-
-            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-500/5 px-3 py-2.5 dark:bg-emerald-500/10">
+            <div className="flex items-center gap-2 rounded-2xl border border-dashed border-emerald-400/50 bg-emerald-500/5 px-3 py-2.5 dark:bg-emerald-500/10">
               <Tag size={14} className="text-emerald-500" />
               <span className="flex-1 text-sm font-bold tracking-[0.14em] text-slate-900 dark:text-white">
-                {COUPON_CODE}
+                {config.couponCode}
               </span>
               <button
                 type="button"
@@ -137,25 +154,16 @@ export default function ExitOfferBanner() {
             </div>
 
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-600 dark:text-amber-300">
-              {SLOTS_LABEL}
+              {config.slotsText}
             </p>
 
-            <div className="mt-3 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleApply}
-                className="flex-1 rounded-2xl bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_16px_40px_-16px_rgba(16,185,129,0.6)] transition-transform hover:-translate-y-0.5"
-              >
-                Apply Now
-              </button>
-              <button
-                type="button"
-                onClick={() => setVisible(false)}
-                className="rounded-2xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
-              >
-                Later
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleApply}
+              className="mt-3 w-full rounded-2xl bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_16px_40px_-16px_rgba(16,185,129,0.6)] transition-transform hover:-translate-y-0.5"
+            >
+              Apply Now
+            </button>
           </div>
         </motion.aside>
       )}
